@@ -58,4 +58,14 @@ public class OrderController {
                 updatedOrder
         );
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseMessage<Void> cancelOrder(@PathVariable Long id) {
+        orderService.deleteOrder(id);
+        return new ResponseMessage<>(
+                "주문이 성공적으로 취소되었습니다.",
+                String.valueOf(HttpStatus.OK.value()),
+                null
+        );
+    }
 }
