@@ -78,4 +78,11 @@ public class OrderService {
                 .map(OrderResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public OrderResponseDto getOrderDetails(String email, Long id) {
+        Order order = orderRepository.findByEmailAndId(email, id)
+                .orElseThrow(() -> new ServiceException("404", "해당 이메일과 주문 번호로 주문을 찾을 수 없습니다."));
+        return new OrderResponseDto(order);
+    }
 }

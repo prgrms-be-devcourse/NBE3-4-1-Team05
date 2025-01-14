@@ -37,4 +37,14 @@ public class OrderController {
                 orders
         );
     }
+
+    @GetMapping("/{email}/{id}")
+    public ResponseMessage<OrderResponseDto> getOrderDetails(@PathVariable String email, @PathVariable Long id) {
+        OrderResponseDto order = orderService.getOrderDetails(email, id);
+        return new ResponseMessage<>(
+                "주문 상세 조회 성공",
+                String.valueOf(HttpStatus.OK.value()),
+                order
+        );
+    }
 }
