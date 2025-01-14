@@ -41,6 +41,11 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderMenu> orderMenus = new ArrayList<>();
 
+    public void updateOrder(String email, String address) {
+        this.email = email;
+        this.address = address;
+    }
+
     public void addOrderMenu(OrderMenu orderMenu) {
         this.orderMenus.add(orderMenu);
         orderMenu.setOrder(this);

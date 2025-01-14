@@ -3,6 +3,7 @@ package com.team5.nbe341team05.domain.order.controller;
 import com.team5.nbe341team05.common.response.ResponseMessage;
 import com.team5.nbe341team05.domain.order.dto.OrderDto;
 import com.team5.nbe341team05.domain.order.dto.OrderResponseDto;
+import com.team5.nbe341team05.domain.order.dto.orderUpdateDto.OrderUpdateRequestDto;
 import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,16 @@ public class OrderController {
                 "주문 상세 조회 성공",
                 String.valueOf(HttpStatus.OK.value()),
                 order
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseMessage<OrderResponseDto> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateRequestDto updateRequestDto) {
+        OrderResponseDto updatedOrder = orderService.updateOrder(id, updateRequestDto);
+        return new ResponseMessage<>(
+                "주문이 성공적으로 수정되었습니다.",
+                String.valueOf(HttpStatus.OK.value()),
+                updatedOrder
         );
     }
 }

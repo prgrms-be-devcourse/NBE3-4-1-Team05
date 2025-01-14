@@ -9,6 +9,7 @@ import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.repository.MenuRepository;
 import com.team5.nbe341team05.domain.order.dto.OrderDto;
 import com.team5.nbe341team05.domain.order.dto.OrderResponseDto;
+import com.team5.nbe341team05.domain.order.dto.orderUpdateDto.OrderUpdateRequestDto;
 import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.order.repository.OrderRepository;
 import com.team5.nbe341team05.domain.orderMenu.entity.OrderMenu;
@@ -33,7 +34,7 @@ public class OrderService {
         cartRepository.save(cart);
 
         for (CartMenuDto cartMenuDto : orderDto.getProducts()) {
-            Menu menu = menuRepository.findById(cartMenuDto.getProductId()).orElseThrow(() -> new ServiceException("400","상품을 찾을 수 없습니다."));
+            Menu menu = menuRepository.findById(cartMenuDto.getProductId()).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
 
             CartMenu cartMenu = new CartMenu(menu, cartMenuDto.getQuantity());
             cart.addCartMenu(cartMenu);
@@ -83,6 +84,18 @@ public class OrderService {
     public OrderResponseDto getOrderDetails(String email, Long id) {
         Order order = orderRepository.findByEmailAndId(email, id)
                 .orElseThrow(() -> new ServiceException("404", "해당 이메일과 주문 번호로 주문을 찾을 수 없습니다."));
+        return new OrderResponseDto(order);
+    }
+
+    @Transactional
+    public OrderResponseDto updateOrder(Long id, OrderUpdateRequestDto updateRequestDto) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
+
+        order.updateOrder(updateRequestDto.getEmail(), updateRequestDto.getAddress());
+
+        orderRepository.save(order);
+
         return new OrderResponseDto(order);
     }
 }
