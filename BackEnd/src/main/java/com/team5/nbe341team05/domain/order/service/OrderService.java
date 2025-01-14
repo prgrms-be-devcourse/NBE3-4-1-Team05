@@ -1,5 +1,6 @@
 package com.team5.nbe341team05.domain.order.service;
 
+import com.team5.nbe341team05.common.exceptions.ServiceException;
 import com.team5.nbe341team05.domain.cart.entity.Cart;
 import com.team5.nbe341team05.domain.cart.repository.CartRepository;
 import com.team5.nbe341team05.domain.cartMenu.dto.CartMenuDto;
@@ -29,7 +30,7 @@ public class OrderService {
         cartRepository.save(cart);
 
         for (CartMenuDto cartMenuDto : orderDto.getProducts()) {
-            Menu menu = menuRepository.findById(cartMenuDto.getProductId()).orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+            Menu menu = menuRepository.findById(cartMenuDto.getProductId()).orElseThrow(() -> new ServiceException("400","상품을 찾을 수 없습니다."));
 
             CartMenu cartMenu = new CartMenu(menu, cartMenuDto.getQuantity());
             cart.addCartProduct(cartMenu);

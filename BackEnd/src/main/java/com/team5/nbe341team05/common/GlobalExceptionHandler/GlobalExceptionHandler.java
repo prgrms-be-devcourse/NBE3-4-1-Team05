@@ -19,31 +19,23 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<ResponseMessage<Void>> handle(NoHandlerFoundException ex) {
 
-
+    private ResponseEntity<ResponseMessage<Void>> createNotFoundResponse(String message) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(new ResponseMessage<>(
-                        "해당 데이터가 존재하지 않습니다.",
-                        "404",
-                        null
-                ));
+                .body(new ResponseMessage<>(message, "404", null));
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ResponseMessage<Void>> handle(NoHandlerFoundException ex) {
+        return createNotFoundResponse("해당 데이터가 존재하지 않습니다.");
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ResponseMessage<Void>> handle(NoSuchElementException ex) {
-
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(new ResponseMessage<>(
-                        "해당 데이터가 존재하지 않습니다."
-                        , "404",
-                        null
-                ));
+        return createNotFoundResponse("해당 데이터가 존재하지 않습니다.");
     }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResponseMessage<Void>> handle(MethodArgumentNotValidException ex) {
