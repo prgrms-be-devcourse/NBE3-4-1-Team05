@@ -33,7 +33,7 @@ public class OrderService {
             Menu menu = menuRepository.findById(cartMenuDto.getProductId()).orElseThrow(() -> new ServiceException("400","상품을 찾을 수 없습니다."));
 
             CartMenu cartMenu = new CartMenu(menu, cartMenuDto.getQuantity());
-            cart.addCartProduct(cartMenu);
+            cart.addCartMenu(cartMenu);
         }
 
         LocalDateTime now = LocalDateTime.now();

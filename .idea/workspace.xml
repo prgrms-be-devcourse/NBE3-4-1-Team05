@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="13708bc0-d276-4204-a6aa-38167634c977" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/common/GlobalExceptionHandler/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/common/GlobalExceptionHandler/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/common/exceptions/ServiceException.java" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/common/exceptions/ServiceException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/cart/entity/Cart.java" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/cart/entity/Cart.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/order/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/order/service/OrderService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -88,7 +86,7 @@
       <option name="presentableId" value="Default" />
       <updated>1736836026666</updated>
       <workItem from="1736836027758" duration="256000" />
-      <workItem from="1736836286085" duration="9203000" />
+      <workItem from="1736836286085" duration="9315000" />
     </task>
     <servers />
   </component>

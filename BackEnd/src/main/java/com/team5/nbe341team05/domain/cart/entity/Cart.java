@@ -28,7 +28,7 @@ public class Cart {
     @OneToOne(mappedBy = "order_id")
     private Order order;
 
-    public void addCartProduct(CartMenu cartmenu) {
+    public void addCartMenu(CartMenu cartmenu) {
         cartMenus.add(cartmenu);
         cartmenu.setCart(this);
     }
