@@ -31,4 +31,9 @@ public class CartMenu {
     public void setCart(Cart cart) {
         this.cart = cart;
     }
+
+    public CartMenu(Menu menu, int quantity) {
+        this.menu = menu;
+        this.quantity = quantity;
+    }
 }

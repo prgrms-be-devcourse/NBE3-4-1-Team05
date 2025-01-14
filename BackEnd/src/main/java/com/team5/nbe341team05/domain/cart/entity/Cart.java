@@ -32,4 +32,11 @@ public class Cart {
         cartMenus.add(cartmenu);
         cartmenu.setCart(this);
     }
+
+    public void clear() {
+        for (CartMenu cartMenu : cartMenus) {
+            cartMenu.setCart(null);
+        }
+        this.cartMenus.clear();
+    }
 }

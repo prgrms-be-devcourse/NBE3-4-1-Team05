@@ -45,4 +45,8 @@ public class Order {
         this.orderMenus.add(orderMenu);
         orderMenu.setOrder(this);
     }
+
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 }

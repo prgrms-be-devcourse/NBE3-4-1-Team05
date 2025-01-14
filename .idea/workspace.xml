@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="13708bc0-d276-4204-a6aa-38167634c977" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/cart/entity/Cart.java" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/cart/entity/Cart.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/cartMenu/entity/CartMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/cartMenu/entity/CartMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/order/dto/OrderDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/order/dto/OrderDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/order/entity/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/order/entity/Order.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/order/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/order/service/OrderService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/orderMenu/entity/OrderMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/BackEnd/src/main/java/com/team5/nbe341team05/domain/orderMenu/entity/OrderMenu.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/BackEnd">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2rbmDBjTx9iaAD3eDumAz3Uo5Jn" />
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "Feature/4-Kwon,Jang",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "spring.configuration.checksum": "2aef292d356d1fda1cf7e1ac713dd64c",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="Nbe341Team05Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="com.team5.NBE3-4-1-Team05.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.team5.nbe341team05.Nbe341Team05Application" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="13708bc0-d276-4204-a6aa-38167634c977" name="Changes" comment="" />
+      <created>1736836026666</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1736836026666</updated>
+      <workItem from="1736836027758" duration="256000" />
+      <workItem from="1736836286085" duration="6364000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
