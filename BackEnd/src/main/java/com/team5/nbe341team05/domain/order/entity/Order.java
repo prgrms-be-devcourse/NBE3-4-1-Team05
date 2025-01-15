@@ -1,11 +1,13 @@
 package com.team5.nbe341team05.domain.order.entity;
 
 
-import com.team5.nbe341team05.domain.cart.entity.Cart;
 import com.team5.nbe341team05.domain.orderMenu.entity.OrderMenu;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "\"order\"")
 public class Order {
 
     @Id

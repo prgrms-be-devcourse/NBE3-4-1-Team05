@@ -1,6 +1,5 @@
 package com.team5.nbe341team05.domain.order.controller;
 
-import com.team5.nbe341team05.domain.order.dto.OrderResponseDto;
 import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.order.service.OrderService;
 import com.team5.nbe341team05.domain.orderMenu.Dto.OrderMenuDto;
@@ -15,10 +14,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -147,18 +144,10 @@ public class OrderControllerTest {
     @DisplayName("email 주문 조회 성공")
     void t4() throws Exception {
         ResultActions resultActions = mvc.perform(
-                get("/order/{email}")
-                        .content("""
-                                {
-                                "email": "dev@dev.com"
-                                }
-                                """)
+                        get("/order/{email}", "dev@dev.com")
                         .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
-                        )
-                )
+                        ))
                 .andDo(print());
-
-        List<OrderResponseDto> orders = orderService.getOrdersByEmail("dev@dev.com");
 
         resultActions.andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("getOrdersByEmail"))
@@ -170,12 +159,7 @@ public class OrderControllerTest {
     @DisplayName("email 주문 조회 실패 with 없는 email")
     void t5() throws Exception {
         ResultActions resultActions = mvc.perform(
-                get("/order/{email}")
-                        .content("""
-                                {
-                                "email":"asfasfasf"
-                                }
-                                """)
+                        get("/order/{email}", "asfasfasf")
                         .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
                         )
         )
@@ -192,19 +176,11 @@ public class OrderControllerTest {
     @DisplayName("email 주문 상세 조회 성공")
     void t6() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        get("/order/{email}{id}")
-                                .content("""
-                                {
-                                "email": "dev@dev.com",
-                                "id": 1
-                                }
-                                """)
+                        get("/order/{email}{id}", "dev@dev.com",1)
                                 .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
                                 )
                 )
                 .andDo(print());
-
-        OrderResponseDto orderDetails = orderService.getOrderDetails("dev@dev.com", 1L);
 
         resultActions.andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("getOrderDetails"))
@@ -219,4 +195,175 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data.deliveryStatus").isNotEmpty())
                 .andExpect(jsonPath("$.data.omlist").isNotEmpty());
     }
+
+    @Test
+    @DisplayName("email 주문 상세 조회 실패")
+    void t7() throws Exception {
+        ResultActions resultActions = mvc.perform(
+                        get("/order/{email}{id}", "dev@dev.com",10)
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
+                                )
+                )
+                .andDo(print());
+
+        resultActions.andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("getOrderDetails"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.msg").value("해당 이메일과 주문 번호로 주문을 찾을 수 없습니다."))
+                .andExpect(jsonPath("$.resultCode").value("404"));
+    }
+
+    @Test
+    @DisplayName("주문 수정 성공")
+    void t8() throws Exception {
+        ResultActions resultActions = mvc.perform(
+                        put("/order/{email}{id}", "dev@dev.com",1)
+                                .content("""
+                                        {
+                                        ”email”: "dev12@dev.com",
+                                        ”address”: "서울(수정)",
+                                         "menus": [
+                                        {
+                                        "menuId": 1
+                                        "quantity": 3
+                                        },
+                                        {
+                                        "menuId": 2
+                                        "quantity": 4
+                                        },
+                                        ],
+                                        }
+                                        """)
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
+                                )
+                )
+                .andDo(print());
+
+        Order order = orderService.findById(1L);
+
+        resultActions.andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("updateOrder"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.msg").value("%d번 주문이 성공적으로 수정되었습니다.".formatted(order.getId())))
+                .andExpect(jsonPath("$.resultCode").value("200"))
+                .andExpect(jsonPath("$.data.id").value(order.getId()))
+                .andExpect(jsonPath("$.data.email").value(order.getEmail()))
+                .andExpect(jsonPath("$.data.address").value(order.getAddress()))
+                .andExpect(jsonPath("$.data.order_time").value(order.getOrderTime()))
+                .andExpect(jsonPath("$.data.totalPrice").value(order.getTotalPrice()))
+                .andExpect(jsonPath("$.data.deliveryStatus").value(order.isDeliveryStatus()))
+                .andExpect(jsonPath("$.data.omlist").value(order.getOrderMenus().stream()
+                        .map(orderMenu -> new OrderMenuDto(
+                                orderMenu.getMenu().getProductName(),
+                                orderMenu.getQuantity())).toList()));
+    }
+
+    @Test
+    @DisplayName("주문 수정 실패 with 오후 2시 이후 주문")
+    void t9() throws Exception {
+
+        Order order = orderService.findById(1L);
+        order.updateStatus(true);
+
+        ResultActions resultActions = mvc.perform(
+                        put("/order/{email}{id}", "dev@dev.com",1)
+                                .content("""
+                                        {
+                                        ”email”: "dev12@dev.com",                         
+                                        ”address”: "서울(수정)",
+                                         "menus": [
+                                        {
+                                        "menuId": 1
+                                        "quantity": 3
+                                        },
+                                        {
+                                        "menuId": 2
+                                        "quantity": 4
+                                        },
+                                        ],
+                                        }
+                                        """)
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
+                                )
+                )
+                .andDo(print());
+
+        resultActions.andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("updateOrder"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.msg").value("주문수정은 오후 2시이후 주문건만 가능합니다."))
+                .andExpect(jsonPath("$.resultCode").value("400"));
+    }
+
+    @Test
+    @DisplayName("주문 수정 실패 with 존재하지않는 주문번호")
+    void t10() throws Exception {
+        ResultActions resultActions = mvc.perform(
+                        put("/order/{email}{id}", "dev@dev.com",12)
+                                .content("""
+                                        {
+                                        ”email”: "dev12@dev.com",
+                                        ”address”: "서울(수정)",
+                                         "menus": [
+                                        {
+                                        "menuId": 1
+                                        "quantity": 3
+                                        },
+                                        {
+                                        "menuId": 2
+                                        "quantity": 4
+                                        },
+                                        ],
+                                        }
+                                        """)
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
+                                )
+                )
+                .andDo(print());
+
+        Order order = orderService.findById(1L);
+        order.updateStatus(true);
+
+        resultActions.andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("updateOrder"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.msg").value("해당 주문을 찾을 수 없습니다."))
+                .andExpect(jsonPath("$.resultCode").value("404"));
+    }
+
+    @Test
+    @DisplayName("주문 취소 성공")
+    void t11() throws Exception {
+        ResultActions resultActions = mvc.perform(
+                        put("/order/{email}{id}", "dev@dev.com",1)
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
+                                )
+                )
+                .andDo(print());
+
+        resultActions.andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("cancelOrder"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.msg").value("주문이 성공적으로 취소되었습니다."))
+                .andExpect(jsonPath("$.resultCode").value("200"));
+    }
+
+    @Test
+    @DisplayName("주문 취소 실패 with 존재하지않는 주문번호")
+    void t12() throws Exception {
+        ResultActions resultActions = mvc.perform(
+                        put("/order/{email}{id}", "dev@dev.com",12)
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
+                                )
+                )
+                .andDo(print());
+
+        resultActions.andExpect(handler().handlerType(OrderController.class))
+                .andExpect(handler().methodName("cancelOrder"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.msg").value("해당 주문을 찾을 수 없습니다."))
+                .andExpect(jsonPath("$.resultCode").value("404"));
+    }
+
+
 }

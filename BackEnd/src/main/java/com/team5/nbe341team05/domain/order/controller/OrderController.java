@@ -3,7 +3,7 @@ package com.team5.nbe341team05.domain.order.controller;
 import com.team5.nbe341team05.common.response.ResponseMessage;
 import com.team5.nbe341team05.domain.order.dto.OrderDto;
 import com.team5.nbe341team05.domain.order.dto.OrderResponseDto;
-import com.team5.nbe341team05.domain.order.dto.orderUpdateDto.OrderUpdateRequestDto;
+import com.team5.nbe341team05.domain.order.dto.OrderUpdateRequestDto;
 import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +53,7 @@ public class OrderController {
     public ResponseMessage<OrderResponseDto> updateOrder(@PathVariable String email, @PathVariable Long id, @RequestBody OrderUpdateRequestDto updateRequestDto) {
         OrderResponseDto updatedOrder = orderService.updateOrder(email, id, updateRequestDto);
         return new ResponseMessage<>(
-                "주문이 성공적으로 수정되었습니다.",
+                "%d번 주문이 성공적으로 수정되었습니다.".formatted(updatedOrder.getId()),
                 String.valueOf(HttpStatus.OK.value()),
                 updatedOrder
         );

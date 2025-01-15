@@ -9,7 +9,7 @@ import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.repository.MenuRepository;
 import com.team5.nbe341team05.domain.order.dto.OrderDto;
 import com.team5.nbe341team05.domain.order.dto.OrderResponseDto;
-import com.team5.nbe341team05.domain.order.dto.orderUpdateDto.OrderUpdateRequestDto;
+import com.team5.nbe341team05.domain.order.dto.OrderUpdateRequestDto;
 import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.order.repository.OrderRepository;
 import com.team5.nbe341team05.domain.orderMenu.entity.OrderMenu;
@@ -36,7 +36,7 @@ public class OrderService {
         cartRepository.save(cart);
 
         for (CartMenuDto cartMenuDto : orderDto.getProducts()) {
-            Menu menu = menuRepository.findById(cartMenuDto.getProductId()).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
+            Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
 
             CartMenu cartMenu = new CartMenu(menu, cartMenuDto.getQuantity());
             cart.addCartMenu(cartMenu);
@@ -102,7 +102,7 @@ public class OrderService {
         int totalPrice = 0;
 
         for (CartMenuDto cartMenuDto : updateRequestDto.getOmlist()) {
-            Menu menu = menuRepository.findById(cartMenuDto.getProductId()).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
+            Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
 
             int price = menu.getPrice();
             int tPrice = price * cartMenuDto.getQuantity();
@@ -124,6 +124,11 @@ public class OrderService {
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
 
         orderRepository.delete(order);
+    }
+
+    @Transactional(readOnly = true)
+    public Order findById(Long id) {
+        return orderRepository.findById(id).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
     }
 
     @Scheduled(cron = "0 0 14 * * *") // 매일 14:00 실행

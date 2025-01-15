@@ -1,7 +1,6 @@
-package com.team5.nbe341team05.domain.order.dto.orderUpdateDto;
+package com.team5.nbe341team05.domain.order.dto;
 
 import com.team5.nbe341team05.domain.cartMenu.dto.CartMenuDto;
-import com.team5.nbe341team05.domain.orderMenu.Dto.OrderMenuDto;
 import lombok.Getter;
 import lombok.Setter;
 

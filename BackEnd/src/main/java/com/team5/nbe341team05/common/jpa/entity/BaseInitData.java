@@ -1,7 +1,6 @@
 package com.team5.nbe341team05.common.jpa.entity;
 
 import com.team5.nbe341team05.domain.admin.service.AdminService;
-import com.team5.nbe341team05.domain.cart.service.CartService;
 import com.team5.nbe341team05.domain.menu.service.MenuService;
 import com.team5.nbe341team05.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,6 @@
 package com.team5.nbe341team05.domain.cart.entity;
 
 import com.team5.nbe341team05.domain.cartMenu.entity.CartMenu;
-import com.team5.nbe341team05.domain.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
