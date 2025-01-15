@@ -6,11 +6,9 @@ import com.team5.nbe341team05.domain.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Entity
 @Getter
-@RequiredArgsConstructor
 @NoArgsConstructor
 public class CartMenu {
 
@@ -30,5 +28,10 @@ public class CartMenu {
 
     public void setCart(Cart cart) {
         this.cart = cart;
+    }
+
+    public CartMenu(Menu menu, int quantity) {
+        this.menu = menu;
+        this.quantity = quantity;
     }
 }
