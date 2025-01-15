@@ -41,5 +41,5 @@ out/
 db_dev.mv.db
 db_dev.trace.db
 
-### IntelliJ IDEA ###
-application.yml
+# Exclude properties files
+**/src/main/resources/application.yml
