@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +52,7 @@ public class OrderService {
                 .address(orderDto.getAddress())
                 .orderTime(LocalDateTime.now())
                 .deliveryStatus(orderStatus)
+                .totalPrice(0)
                 .build();
 
         for (CartMenu cartMenu : cart.getCartMenus()) {
@@ -71,11 +73,11 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderResponseDto> getOrdersByEmail(String email) {
-        List<Order> orders = orderRepository.findByEmail(email);
+        Optional<List<Order>> orders = orderRepository.findByEmail(email);
         if (orders.isEmpty()) {
             throw new ServiceException("404", "해당 이메일을 찾을 수 없습니다.");
         }
-        return orders.stream()
+        return orders.get().stream()
                 .map(OrderResponseDto::new)
                 .collect(Collectors.toList());
     }
@@ -89,21 +91,43 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto updateOrder(Long id, OrderUpdateRequestDto updateRequestDto) {
+        if (!checkTime()) {
+            throw new ServiceException("400", "주문수정은 오후 2시이후 주문건만 가능합니다.");
+        }
+
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
 
-        order.updateOrder(updateRequestDto.getEmail(), updateRequestDto.getAddress());
 
+        int totalPrice = 0;
+
+        for (CartMenuDto cartMenuDto : updateRequestDto.getOmlist()) {
+            Menu menu = menuRepository.findById(cartMenuDto.getProductId()).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
+
+            int price = menu.getPrice();
+            int tPrice = price * cartMenuDto.getQuantity();
+
+            OrderMenu orderMenu = new OrderMenu(menu, cartMenuDto.getQuantity(), menu.getPrice());
+            order.addOrderMenu(orderMenu);
+            totalPrice += tPrice;
+        }
+
+        order.updateOrder(updateRequestDto.getEmail(), updateRequestDto.getAddress(), totalPrice);
         orderRepository.save(order);
 
         return new OrderResponseDto(order);
     }
 
     @Transactional
-    public void deleteOrder(Long id) {
+    public void cancelOrder(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
 
         orderRepository.delete(order);
+    }
+
+    public boolean checkTime() {
+        LocalDateTime now = LocalDateTime.now();
+        return now.getHour() < 14;
     }
 }
