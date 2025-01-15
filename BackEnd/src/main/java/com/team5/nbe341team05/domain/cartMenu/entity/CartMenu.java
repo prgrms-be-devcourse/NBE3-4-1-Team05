@@ -4,13 +4,13 @@ package com.team5.nbe341team05.domain.cartMenu.entity;
 import com.team5.nbe341team05.domain.cart.entity.Cart;
 import com.team5.nbe341team05.domain.menu.entity.Menu;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class CartMenu {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +29,10 @@ public class CartMenu {
 
     public void setCart(Cart cart) {
         this.cart = cart;
+    }
+
+    public CartMenu(Menu menu, int quantity) {
+        this.menu = menu;
+        this.quantity = quantity;
     }
 }

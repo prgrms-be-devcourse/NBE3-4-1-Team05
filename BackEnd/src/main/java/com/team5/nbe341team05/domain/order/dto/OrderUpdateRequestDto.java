@@ -8,8 +8,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class OrderDto {
+public class OrderUpdateRequestDto {
     private String email;
     private String address;
-    private List<CartMenuDto> products;
+    private List<CartMenuDto> omlist;
+
 }

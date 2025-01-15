@@ -33,4 +33,9 @@ public class OrderMenu {
         order.addOrderMenu(this);
     }
 
+    public OrderMenu(Menu menu, int quantity, int price) {
+        this.menu = menu;
+        this.quantity = quantity;
+        this.price = price;
+    }
 }
