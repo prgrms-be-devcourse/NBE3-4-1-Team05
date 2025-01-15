@@ -24,7 +24,7 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 100
-        # dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.H2Dialect
         #        show_sql: 'true'
         format_sql: true
         highlight_sql: true
