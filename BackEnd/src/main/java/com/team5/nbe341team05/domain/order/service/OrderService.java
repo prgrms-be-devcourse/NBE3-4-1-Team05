@@ -14,6 +14,7 @@ import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.order.repository.OrderRepository;
 import com.team5.nbe341team05.domain.orderMenu.entity.OrderMenu;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public Order createOrder(OrderDto orderDto) {
+    public OrderResponseDto createOrder(OrderDto orderDto) {
         Cart cart = new Cart();
         cartRepository.save(cart);
 
@@ -68,7 +69,7 @@ public class OrderService {
         orderRepository.save(order);
         cart.clear();
 
-        return order;
+        return new OrderResponseDto(order);
     }
 
     @Transactional(readOnly = true)
@@ -90,12 +91,12 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponseDto updateOrder(Long id, OrderUpdateRequestDto updateRequestDto) {
+    public OrderResponseDto updateOrder(String email, Long id, OrderUpdateRequestDto updateRequestDto) {
         if (!checkTime()) {
             throw new ServiceException("400", "주문수정은 오후 2시이후 주문건만 가능합니다.");
         }
 
-        Order order = orderRepository.findById(id)
+        Order order = orderRepository.findByEmailAndId(email, id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
 
 
@@ -119,12 +120,25 @@ public class OrderService {
     }
 
     @Transactional
-    public void cancelOrder(Long id) {
-        Order order = orderRepository.findById(id)
+    public void cancelOrder(String email, Long id) {
+        Order order = orderRepository.findByEmailAndId(email, id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
 
         orderRepository.delete(order);
     }
+
+    @Scheduled(cron = "0 0 14 * * *") // 매일 14:00 실행
+    @Transactional
+    public void updateDeliveryStatus() {
+        List<Order> orderList = orderRepository.findAllByDeliveryStatusFalse();
+
+        for (Order order : orderList) {
+            order.updateStatus(true); // 배송 시작 설정
+        }
+
+        System.out.println("[자동] 오후 2시 - " + orderList.size() + "개의 주문 상태가 업데이트 되었습니다.");
+    }
+
 
     public boolean checkTime() {
         LocalDateTime now = LocalDateTime.now();

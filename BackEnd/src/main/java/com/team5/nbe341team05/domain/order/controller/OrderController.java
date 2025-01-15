@@ -20,12 +20,12 @@ public class OrderController {
 
     @PostMapping
     public ResponseMessage<OrderResponseDto> createOrder(@RequestBody OrderDto orderDto) {
-        Order order = orderService.createOrder(orderDto);
+        OrderResponseDto orderResponseDto = orderService.createOrder(orderDto);
 
         return new ResponseMessage<>(
                 "주문이 성공적으로 생성되었습니다.",
                 String.valueOf(HttpStatus.OK.value()),
-                new OrderResponseDto(order)
+                orderResponseDto
         );
     }
 
@@ -49,9 +49,9 @@ public class OrderController {
         );
     }
 
-    @PutMapping("/{id}")
-    public ResponseMessage<OrderResponseDto> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateRequestDto updateRequestDto) {
-        OrderResponseDto updatedOrder = orderService.updateOrder(id, updateRequestDto);
+    @PutMapping("/{email}/{id}")
+    public ResponseMessage<OrderResponseDto> updateOrder(@PathVariable String email, @PathVariable Long id, @RequestBody OrderUpdateRequestDto updateRequestDto) {
+        OrderResponseDto updatedOrder = orderService.updateOrder(email, id, updateRequestDto);
         return new ResponseMessage<>(
                 "주문이 성공적으로 수정되었습니다.",
                 String.valueOf(HttpStatus.OK.value()),
@@ -59,9 +59,9 @@ public class OrderController {
         );
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseMessage<Void> cancelOrder(@PathVariable Long id) {
-        orderService.cancelOrder(id);
+    @DeleteMapping("/{email}/{id}")
+    public ResponseMessage<Void> cancelOrder(@PathVariable String email, @PathVariable Long id) {
+        orderService.cancelOrder(email, id);
         return new ResponseMessage<>(
                 "주문이 성공적으로 취소되었습니다.",
                 String.valueOf(HttpStatus.OK.value()),

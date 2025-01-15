@@ -47,6 +47,10 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
+    public void updateStatus(boolean deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
+    }
+
     public void addOrderMenu(OrderMenu orderMenu) {
         this.orderMenus.add(orderMenu);
         orderMenu.setOrder(this);
