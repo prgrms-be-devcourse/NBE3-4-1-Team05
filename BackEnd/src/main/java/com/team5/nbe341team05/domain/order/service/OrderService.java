@@ -82,7 +82,9 @@ public class OrderService {
     public void cancelOrder(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
-
         this.orderRepository.delete(order);
     }
+
+    @Transactional
+    public void getOrder(Long id) {}
 }

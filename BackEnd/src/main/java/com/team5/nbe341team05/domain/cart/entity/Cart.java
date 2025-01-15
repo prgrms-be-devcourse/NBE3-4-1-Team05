@@ -25,11 +25,18 @@ public class Cart {
     @OneToMany(mappedBy = "cart")
     private List<CartMenu> cartMenus = new ArrayList<>();
 
-    @OneToOne(mappedBy = "order_id")
-    private Order order;
+//    @OneToOne(mappedBy = "order_id")
+//    private Order order;
 
     public void addCartProduct(CartMenu cartmenu) {
         cartMenus.add(cartmenu);
         cartmenu.setCart(this);
+    }
+
+    public void clear() {
+        for (CartMenu cartMenu : cartMenus) {
+            cartMenu.setCart(null);
+        }
+        this.cartMenus.clear();
     }
 }
