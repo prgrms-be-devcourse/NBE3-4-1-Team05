@@ -14,7 +14,6 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
 
-    @Transactional
     public Menu createMenu(MenuDto menuDto) {
         Menu menu = Menu.builder()
                 .productName(menuDto.getProductName())
@@ -36,4 +35,9 @@ public class MenuService {
         return menu;
     }
 
+    @Transactional
+    public void deleteMenu(Long id) {
+        Menu menu = menuRepository.findById(id).orElseThrow(()->new ServiceException("404","해당 상품을 찾을 수 없습니다."));
+        menuRepository.delete(menu);
+    }
 }

@@ -32,4 +32,14 @@ public class MenuAdminController {
         return new ResponseMessage<>("상품이 성공적으로 수정되었습니다.", String.valueOf(HttpStatus.OK.value()), menu);
 
     }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    public ResponseMessage<Void> deleteMenu(@PathVariable("id") long id) {
+        menuService.deleteMenu(id);
+
+        return new ResponseMessage<>("상품이 성공적으로 삭제되었습니다.",
+                String.valueOf(HttpStatus.OK.value()),
+                null);
+    }
 }
