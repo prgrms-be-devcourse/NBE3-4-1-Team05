@@ -43,5 +43,15 @@ public class OrderController {
         return ResponseEntity.ok(pagedOrders);
     }
 
+    @Transactional
+    @DeleteMapping("/admin/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseMessage<OrderResponseDto> cancelOrder(@PathVariable long id) {
+        orderService.cancelOrder(id);
+        return new ResponseMessage<>(
+                "주문이 성공적으로 취소되었습니다.",
+                String.valueOf(HttpStatus.OK.value()),
+                null);
+    }
 
 }

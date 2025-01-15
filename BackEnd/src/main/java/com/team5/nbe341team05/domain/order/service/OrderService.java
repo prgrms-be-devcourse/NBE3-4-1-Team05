@@ -47,11 +47,11 @@ public class OrderService {
         int totalPrice = 0;
 
         Order order = Order.builder()
-                .cart(cart)
                 .email(orderDto.getEmail())
                 .address(orderDto.getAddress())
                 .orderTime(LocalDateTime.now())
                 .deliveryStatus(orderStatus)
+                .totalPrice(0)
                 .build();
 
         for (CartMenu cartMenu : cart.getCartMenus()) {
@@ -76,5 +76,13 @@ public class OrderService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Order> orders = orderRepository.findAll(pageable);
         return orders.map(OrderResponseDto::new);
+    }
+
+    @Transactional
+    public void cancelOrder(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
+
+        this.orderRepository.delete(order);
     }
 }
