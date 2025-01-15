@@ -36,6 +36,7 @@ public class Menu {
     private int stock;          // 재고 수량
 
     private String image;       // 이미지 URL 또는 경로
+    
 }
 
 
