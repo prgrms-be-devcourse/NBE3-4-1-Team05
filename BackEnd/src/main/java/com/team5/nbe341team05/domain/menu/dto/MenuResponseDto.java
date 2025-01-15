@@ -16,4 +16,5 @@ public class MenuResponseDto {
     private int price;
     private int stock;
     private String image;
+    private long views;
 }
