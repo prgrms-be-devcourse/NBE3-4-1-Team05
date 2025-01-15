@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Builder
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cart {
@@ -22,10 +22,10 @@ public class Cart {
     @Column(name = "cart_id")
     private Long id;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartMenu> cartMenus = new ArrayList<>();
 
-    @OneToOne(mappedBy = "order_id")
+    @OneToOne(mappedBy = "cart")
     private Order order;
 
     public void addCartProduct(CartMenu cartmenu) {

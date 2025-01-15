@@ -10,9 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -44,5 +41,23 @@ public class MenuService {
                 .stock(menu.getStock())
                 .image(menu.getImage())
                 .build();
+    }
+
+    public long count() {
+        return menuRepository.count();
+    }
+
+    @Transactional
+    public MenuResponseDto create(String productName, String description, int price, int stock, String image) {
+        Menu menu = Menu.builder()
+                .productName(productName)
+                .description(description)
+                .price(price)
+                .stock(stock)
+                .image(image)
+                .build();
+        Menu saveMenu = menuRepository.save(menu);
+
+        return convertToDTO(saveMenu);
     }
 }
