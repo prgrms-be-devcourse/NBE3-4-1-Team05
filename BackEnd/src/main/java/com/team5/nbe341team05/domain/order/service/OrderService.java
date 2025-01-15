@@ -170,4 +170,11 @@ public class OrderService {
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
         this.orderRepository.delete(order);
     }
+
+    @Transactional(readOnly = true)
+    public OrderResponseDto getOrderDetailsForAdmin(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ServiceException("404", "해당 이메일과 주문 번호로 주문을 찾을 수 없습니다."));
+        return new OrderResponseDto(order);
+    }
 }
