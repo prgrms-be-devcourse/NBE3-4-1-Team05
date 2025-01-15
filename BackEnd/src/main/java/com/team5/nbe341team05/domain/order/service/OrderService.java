@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class OrderService {
     private final CartRepository cartRepository;
     private final MenuRepository menuRepository;
@@ -40,7 +40,7 @@ public class OrderService {
         cartRepository.save(cart);
 
         for (CartMenuDto cartMenuDto : orderDto.getProducts()) {
-            Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
+            Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
 
             CartMenu cartMenu = new CartMenu(menu, cartMenuDto.getQuantity());
             cart.addCartMenu(cartMenu);
@@ -96,7 +96,7 @@ public class OrderService {
     @Transactional
     public OrderResponseDto updateOrder(String email, Long id, OrderUpdateRequestDto updateRequestDto) {
         if (!checkTime()) {
-            throw new ServiceException("400", "주문수정은 오후 2시이후 주문건만 가능합니다.");
+            throw new ServiceException("400", "주문수정은 오후 2시 이후 주문건만 가능합니다.");
         }
 
         Order order = orderRepository.findByEmailAndId(email, id)
@@ -106,7 +106,7 @@ public class OrderService {
         int totalPrice = 0;
 
         for (CartMenuDto cartMenuDto : updateRequestDto.getOmlist()) {
-            Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
+            Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
 
             int price = menu.getPrice();
             int tPrice = price * cartMenuDto.getQuantity();
@@ -132,7 +132,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Order findById(Long id) {
-        return orderRepository.findById(id).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
+        return orderRepository.findById(id).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
     }
 
     @Scheduled(cron = "0 0 14 * * *") // 매일 14:00 실행
@@ -156,12 +156,10 @@ public class OrderService {
         return orderRepository.findFirstByOrderByIdDesc();
     }
 
-    @Transactional(readOnly = true)
     public Page<OrderResponseDto> getPagedOrders(int page, int size, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("ASC") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Order> orders = orderRepository.findAll(pageable);
-        return orders.map(OrderResponseDto::new);
+        return orderRepository.findAll(pageable).map(OrderResponseDto::new);
     }
 
     @Transactional

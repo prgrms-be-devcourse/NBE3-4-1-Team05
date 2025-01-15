@@ -3,19 +3,21 @@ package com.team5.nbe341team05.domain.order.controller;
 import com.team5.nbe341team05.common.response.ResponseMessage;
 import com.team5.nbe341team05.domain.order.dto.OrderResponseDto;
 import com.team5.nbe341team05.domain.order.service.OrderService;
-import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/order")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasRole('ADMIN')")
+@RequiredArgsConstructor
 public class OrderAdminController {
 
-    private OrderService orderService;
+    private final OrderService orderService;
 
     @Transactional
     @DeleteMapping("/{id}")
@@ -27,19 +29,19 @@ public class OrderAdminController {
                 null);
     }
 
-    @Transactional
-    @GetMapping()
-    public ResponseEntity<Page<OrderResponseDto>> getOrderListForAdmin( // 추후에 가능하면 이메일 별 검색 기능 추가
-                                                                        @RequestParam(defaultValue = "0") int page, // 0-based index
-                                                                        @RequestParam(defaultValue = "10") int size,
-                                                                        @RequestParam(defaultValue = "id") String sortBy,
-                                                                        @RequestParam(defaultValue = "DESC") String sortDir
+    @Transactional(readOnly = true)
+    @GetMapping
+    public ResponseEntity<Page<OrderResponseDto>> getOrderListForAdmin(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDir
     ) {
         Page<OrderResponseDto> pagedOrders = orderService.getPagedOrders(page, size, sortBy, sortDir);
         return ResponseEntity.ok(pagedOrders);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     public ResponseMessage<OrderResponseDto> getOrderDetailById(@PathVariable long id) {
         OrderResponseDto order = this.orderService.getOrderDetailsForAdmin(id);
