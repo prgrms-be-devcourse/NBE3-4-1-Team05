@@ -1,8 +1,10 @@
 package com.team5.nbe341team05.domain.menu.service;
 
+import com.team5.nbe341team05.common.exception.ServiceException;
 import com.team5.nbe341team05.domain.menu.dto.MenuDto;
 import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.repository.MenuRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
 
+    @Transactional
     public Menu createMenu(MenuDto menuDto) {
         Menu menu = Menu.builder()
                 .productName(menuDto.getProductName())
@@ -22,18 +25,15 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
-    public Menu modifyMenu(Menu menu, String productName, int price, int stock, String image) {
-        menu = Menu.builder()
-                .productName(productName)
-                .price(price)
-                .stock(stock)
-                .image(image)
-                .build();
-        return menuRepository.save(menu);
+    @Transactional
+    public Menu updateMenu(long id, MenuDto menuDto) {
+        Menu menu = menuRepository.findById(id).orElseThrow(() -> new ServiceException("404", "해당 상품을 찾을 수 없습니다."));
+        menu.update(
+                menuDto.getProductName(),
+                menuDto.getPrice(),
+                menuDto.getStock(),
+                menuDto.getImage());
+        return menu;
     }
 
-    public void deleteMenu(Menu menu) {
-        this.menuRepository.delete(menu);
-    }
 }
-
