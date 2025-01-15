@@ -31,7 +31,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public OrderResponseDto createOrder(OrderDto orderDto) {
+    public Order createOrder(OrderDto orderDto) {
         Cart cart = new Cart();
         cartRepository.save(cart);
 
@@ -48,7 +48,6 @@ public class OrderService {
         int totalPrice = 0;
 
         Order order = Order.builder()
-                .cart(cart)
                 .email(orderDto.getEmail())
                 .address(orderDto.getAddress())
                 .orderTime(LocalDateTime.now())
@@ -69,12 +68,12 @@ public class OrderService {
         orderRepository.save(order);
         cart.clear();
 
-        return new OrderResponseDto(order);
+        return order;
     }
 
     @Transactional(readOnly = true)
     public List<OrderResponseDto> getOrdersByEmail(String email) {
-        Optional<List<Order>> orders = orderRepository.findByEmail(email);
+        Optional<List<Order>> orders = orderRepository.findByEmailOrderByIdDesc(email);
         if (orders.isEmpty()) {
             throw new ServiceException("404", "해당 이메일을 찾을 수 없습니다.");
         }
@@ -139,9 +138,12 @@ public class OrderService {
         System.out.println("[자동] 오후 2시 - " + orderList.size() + "개의 주문 상태가 업데이트 되었습니다.");
     }
 
-
     public boolean checkTime() {
         LocalDateTime now = LocalDateTime.now();
         return now.getHour() < 14;
+    }
+
+    public Optional<Order> findFirst() {
+        return orderRepository.findFirstByOrderByIdDesc();
     }
 }

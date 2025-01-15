@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 public class OrderResponseDto {
+    private Long id;
     private String email;
     private String address;
     private LocalDateTime order_time;
@@ -19,6 +20,7 @@ public class OrderResponseDto {
     private List<OrderMenuDto> omlist;
 
     public OrderResponseDto(Order order) {
+        this.id = order.getId();
         this.email = order.getEmail();
         this.address = order.getAddress();
         this.order_time = order.getOrderTime();

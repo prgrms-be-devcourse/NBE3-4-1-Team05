@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
-@Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ResponseMessage<T>(String message, String resultCode, T data) {
     @JsonIgnore

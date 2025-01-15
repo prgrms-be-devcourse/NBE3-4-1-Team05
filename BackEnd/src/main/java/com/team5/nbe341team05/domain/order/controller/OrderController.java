@@ -20,12 +20,12 @@ public class OrderController {
 
     @PostMapping
     public ResponseMessage<OrderResponseDto> createOrder(@RequestBody OrderDto orderDto) {
-        OrderResponseDto orderResponseDto = orderService.createOrder(orderDto);
+        Order order = orderService.createOrder(orderDto);
 
         return new ResponseMessage<>(
-                "주문이 성공적으로 생성되었습니다.",
-                String.valueOf(HttpStatus.OK.value()),
-                orderResponseDto
+                "%d번 주문이 성공적으로 생성되었습니다.".formatted(order.getId()),
+                String.valueOf(HttpStatus.CREATED.value()),
+                new OrderResponseDto(order)
         );
     }
 

@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor
 @RequiredArgsConstructor
 public class Admin {
 

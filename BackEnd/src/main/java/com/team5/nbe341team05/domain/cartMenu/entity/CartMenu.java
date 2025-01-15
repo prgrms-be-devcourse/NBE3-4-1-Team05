@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 
 @Entity
 @Getter
-@RequiredArgsConstructor
 @NoArgsConstructor
 public class CartMenu {
 

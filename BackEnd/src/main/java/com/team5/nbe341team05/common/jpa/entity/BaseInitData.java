@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Lazy;
 @Configuration
 @RequiredArgsConstructor
 public class BaseInitData {
-    private final CartService cartService;
     private final MenuService menuService;
     private final AdminService adminService;
     private final OrderService orderService;

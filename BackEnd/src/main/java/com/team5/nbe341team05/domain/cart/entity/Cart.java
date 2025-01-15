@@ -25,9 +25,6 @@ public class Cart {
     @OneToMany(mappedBy = "cart")
     private List<CartMenu> cartMenus = new ArrayList<>();
 
-    @OneToOne(mappedBy = "order_id")
-    private Order order;
-
     public void addCartMenu(CartMenu cartmenu) {
         cartMenus.add(cartmenu);
         cartmenu.setCart(this);
