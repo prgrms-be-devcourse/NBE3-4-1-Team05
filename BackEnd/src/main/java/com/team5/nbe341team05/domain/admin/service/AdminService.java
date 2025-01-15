@@ -1,7 +1,5 @@
 package com.team5.nbe341team05.domain.admin.service;
 
-import com.team5.nbe341team05.domain.admin.entity.Admin;
-import com.team5.nbe341team05.domain.admin.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,14 +7,31 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AdminService {
 
-    private final AdminRepository adminRepository;
+    /*@Value("${custom-security.admin.username}")
+    private String adminUsername;
 
-    public Admin join(String username, String password) {
-        Admin admin = Admin.builder()
-                .username(username)
-                .password(password)
+    @Value("${custom-security.admin.password}")
+    private String adminPassword;
+
+    @Value("${custom-security.admin.role}")
+    private String adminRole;
+
+    private final AdminRepository adminRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return adminRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("관리자가 아닙니다."));
+    }
+
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        UserDetails admin = User.builder()
+                .username(adminUsername)
+                .password(passwordEncoder.encode(adminPassword))
+                .roles(adminRole)
                 .build();
 
-        return adminRepository.save(admin);
-    }
+        return new InMemoryUserDetailsManager(admin);
+    }*/
 }
