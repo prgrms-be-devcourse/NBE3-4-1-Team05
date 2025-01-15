@@ -1,5 +1,6 @@
 package com.team5.nbe341team05.domain.menu.service;
 
+import com.team5.nbe341team05.domain.menu.dto.MenuRequestDto;
 import com.team5.nbe341team05.domain.menu.dto.MenuResponseDto;
 import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.repository.MenuRepository;
@@ -48,6 +49,7 @@ public class MenuService {
     public MenuResponseDto getMenuById(Long id) {
         Menu menu = menuRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("id에 해당하는 메뉴를 찾을 수 없습니다. id : " + id));
+        menu.plusView();
         return convertToDTO(menu);
     }
 
@@ -68,17 +70,17 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponseDto create(String productName, String description, int price, int stock, long views, String image) {
+    public Menu create(MenuRequestDto requestDto) {
         Menu menu = Menu.builder()
-                .productName(productName)
-                .description(description)
-                .price(price)
-                .stock(stock)
-                .image(image)
-                .views(views)
+                .productName(requestDto.getProductName())
+                .description(requestDto.getDescription())
+                .price(requestDto.getPrice())
+                .stock(requestDto.getStock())
+                .image(requestDto.getImage())
+                .views(0)
                 .build();
         Menu saveMenu = menuRepository.save(menu);
 
-        return convertToDTO(saveMenu);
+        return saveMenu;
     }
 }

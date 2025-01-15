@@ -1,7 +1,9 @@
 package com.team5.nbe341team05.domain.menu.controller;
 
 import com.team5.nbe341team05.common.response.ResponseMessage;
+import com.team5.nbe341team05.domain.menu.dto.MenuRequestDto;
 import com.team5.nbe341team05.domain.menu.dto.MenuResponseDto;
+import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.repository.MenuRepository;
 import com.team5.nbe341team05.domain.menu.service.MenuService;
 import com.team5.nbe341team05.domain.menu.type.MenuSortType;
@@ -36,23 +38,17 @@ class MenuControllerTest {
 
     private void createSampleData() {
         // 다양한 가격, 조회수를 가진 테스트 데이터 생성
-        menuService.create("아메리카노", "기본 커피", 3000, 100, 150, "americano.jpg");
-        menuService.create("카페라떼", "우유가 들어간 커피", 4000, 100, 80, "latte.jpg");
-        menuService.create("카푸치노", "거품이 많은 커피", 4500, 100, 120, "cappuccino.jpg");
-        menuService.create("에스프레소", "진한 커피", 2500, 100, 50, "espresso.jpg");
-        menuService.create("카라멜마끼아또", "달달한 커피", 5000, 100, 200, "caramel.jpg");
+        Menu menu = menuService.create(new MenuRequestDto("아메리카노", "기본 커피", 3000, 100, "americano.jpg"));
+        menuService.create(new MenuRequestDto("카페라떼", "우유가 들어간 커피", 4000, 100, "latte.jpg"));
+        menuService.create(new MenuRequestDto("카푸치노", "거품이 많은 커피", 4500, 100, "cappuccino.jpg"));
+        menuService.create(new MenuRequestDto("에스프레소", "진한 커피", 2500, 100, "espresso.jpg"));
+        menuService.create(new MenuRequestDto("카라멜마끼아또", "달달한 커피", 5000, 100, "caramel.jpg"));
 
         // 페이징 테스트를 위한 추가 데이터
         for (int i = 6; i <= 15; i++) {
-            menuService.create(
-                    "메뉴" + i,
-                    "설명" + i,
-                    i * 1000,
-                    100,
-                    i * 10,
-                    "image" + i + ".jpg"
-            );
+            menuService.create(new MenuRequestDto("메뉴" + i,"설명" + i,i * 1000,100,"image" + i + ".jpg"));
         }
+        menuService.getMenuById(menu.getId());
     }
 
     @Order(1)
@@ -147,7 +143,7 @@ class MenuControllerTest {
 
         // 조회수순
         ResponseMessage<Page<MenuResponseDto>> viewsDesc = menuController.getAllMenus(0, MenuSortType.VIEWS_DESC);
-        assertThat(viewsDesc.data().getContent().get(0).getViews()).isEqualTo(200);
+        assertThat(viewsDesc.data().getContent().get(0).getViews()).isEqualTo(1);
     }
 
     @Order(7)

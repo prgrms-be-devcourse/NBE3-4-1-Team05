@@ -2,6 +2,7 @@ package com.team5.nbe341team05.common.jpa.entity;
 
 import com.team5.nbe341team05.domain.admin.service.AdminService;
 import com.team5.nbe341team05.domain.cart.service.CartService;
+import com.team5.nbe341team05.domain.menu.dto.MenuRequestDto;
 import com.team5.nbe341team05.domain.menu.service.MenuService;
 import com.team5.nbe341team05.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +37,15 @@ public class BaseInitData {
         if(menuService.count() > 0) return;
 
         for(int i = 1; i <= 20; i++){
-            menuService.create(
-                    "Menu" + i, "Menu description" + i, 1000 * i, 10, 10 * i, "img_src");
+            MenuRequestDto menuRequestDto = MenuRequestDto.builder()
+                    .productName("Menu" + i)
+                    .description("Menu description" + i)
+                    .price(1000 * i)
+                    .stock(10)
+                    .image("img_src")
+                    .build();
+
+            menuService.create(menuRequestDto);
         }
 
 //        String[] menuTypes = {"커피", "주스", "스무디", "티", "에이드"};
