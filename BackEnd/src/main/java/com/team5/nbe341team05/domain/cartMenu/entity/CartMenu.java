@@ -5,11 +5,11 @@ import com.team5.nbe341team05.domain.cart.entity.Cart;
 import com.team5.nbe341team05.domain.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class CartMenu {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

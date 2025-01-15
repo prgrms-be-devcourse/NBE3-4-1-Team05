@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "\"orders\"")
+@Table(name = "\"order\"")
 public class Order {
 
     @Id
@@ -40,6 +40,16 @@ public class Order {
 
     @OneToMany(mappedBy = "order")
     private List<OrderMenu> orderMenus = new ArrayList<>();
+
+    public void updateOrder(String email, String address,int totalPrice) {
+        this.email = email;
+        this.address = address;
+        this.totalPrice = totalPrice;
+    }
+
+    public void updateStatus(boolean deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
+    }
 
     public void addOrderMenu(OrderMenu orderMenu) {
         this.orderMenus.add(orderMenu);

@@ -1,6 +1,6 @@
 package com.team5.nbe341team05.common.GlobalExceptionHandler;
 
-import com.team5.nbe341team05.common.exception.ServiceException;
+import com.team5.nbe341team05.common.exceptions.ServiceException;
 import com.team5.nbe341team05.common.response.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
     private ResponseEntity<ResponseMessage<Void>> createNotFoundResponse(String message) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -33,10 +34,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ResponseMessage<Void>> handle(NoSuchElementException ex) {
         return createNotFoundResponse("해당 데이터가 존재하지 않습니다.");
-
     }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResponseMessage<Void>> handle(MethodArgumentNotValidException ex) {
+
+
         String message = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
@@ -45,6 +49,7 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + "-" + error.getCode() + "-" + error.getDefaultMessage())
                 .sorted(Comparator.comparing(String::toString))
                 .collect(Collectors.joining("\n"));
+
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ResponseMessage<>(
@@ -53,10 +58,13 @@ public class GlobalExceptionHandler {
                         null
                 ));
     }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ServiceException.class)
     public ResponseEntity<ResponseMessage<Void>> handle(ServiceException ex) {
+
         ResponseMessage<Void> rsData = ex.getRsData();
+
         return ResponseEntity
                 .status(rsData.getStatusCode())
                 .body(rsData);

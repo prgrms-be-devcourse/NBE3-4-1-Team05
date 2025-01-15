@@ -1,6 +1,5 @@
 package com.team5.nbe341team05.domain.order.dto;
 
-import com.team5.nbe341team05.domain.cartMenu.dto.CartMenuDto;
 import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.orderMenu.Dto.OrderMenuDto;
 import lombok.Getter;
@@ -8,11 +7,11 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
 public class OrderResponseDto {
+    private Long id;
     private String email;
     private String address;
     private LocalDateTime order_time;
@@ -21,6 +20,7 @@ public class OrderResponseDto {
     private List<OrderMenuDto> omlist;
 
     public OrderResponseDto(Order order) {
+        this.id = order.getId();
         this.email = order.getEmail();
         this.address = order.getAddress();
         this.order_time = order.getOrderTime();
