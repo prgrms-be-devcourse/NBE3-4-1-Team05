@@ -14,6 +14,10 @@ import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.order.repository.OrderRepository;
 import com.team5.nbe341team05.domain.orderMenu.entity.OrderMenu;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -150,5 +154,20 @@ public class OrderService {
 
     public Optional<Order> findFirst() {
         return orderRepository.findFirstByOrderByIdDesc();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderResponseDto> getPagedOrders(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("ASC") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Order> orders = orderRepository.findAll(pageable);
+        return orders.map(OrderResponseDto::new);
+    }
+
+    @Transactional
+    public void cancelAdminOrder(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
+        this.orderRepository.delete(order);
     }
 }
