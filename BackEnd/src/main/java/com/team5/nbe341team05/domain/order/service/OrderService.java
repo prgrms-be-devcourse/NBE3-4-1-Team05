@@ -138,6 +138,12 @@ public class OrderService {
         Order order = orderRepository.findByEmailAndId(email, id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
 
+        for (OrderMenu orderMenu : order.getOrderMenus()) {
+            Menu menu = orderMenu.getMenu();
+            int prevQuantity = orderMenu.getQuantity();
+            menu.increaseStock(prevQuantity);
+        }
+
         orderRepository.delete(order);
     }
 
