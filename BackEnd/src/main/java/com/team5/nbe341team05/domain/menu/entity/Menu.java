@@ -43,6 +43,12 @@ public class Menu {
         this.stock = stock;
         this.image = image;
     }
+
+    private long views;              // 메뉴 조회수
+
+    public void plusView(){
+        this.views++;
+    }
 }
 
 
