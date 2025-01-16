@@ -37,7 +37,7 @@ public class Menu {
 
     private String image;       // 이미지 URL 또는 경로
 
-    private long views;              // 메뉴 조회수
+    private long views;        // 메뉴 조회수
 
     public void plusView(){
         this.views++;
