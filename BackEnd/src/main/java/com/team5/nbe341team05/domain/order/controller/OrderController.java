@@ -14,11 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Tag(name = "Order", description = "Order API")
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/order")
+@Tag(name = "Order", description = "Order API")
+@RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
 
@@ -41,11 +42,13 @@ public class OrderController {
     @ApiResponse(responseCode = "200", description = "성공")
     @ApiResponse(responseCode = "404", description = "실패")
     public ResponseMessage<List<OrderResponseDto>> getOrdersByEmail(@PathVariable String email) {
-        List<OrderResponseDto> orders = orderService.getOrdersByEmail(email);
+        List<Order> orders = orderService.getOrdersByEmail(email);
         return new ResponseMessage<>(
                 "주문 목록 조회 성공",
                 String.valueOf(HttpStatus.OK.value()),
-                orders
+                orders.stream().map(
+                        OrderResponseDto::new
+                ).collect(Collectors.toList())
         );
     }
 
@@ -54,11 +57,11 @@ public class OrderController {
     @ApiResponse(responseCode = "200", description = "성공")
     @ApiResponse(responseCode = "404", description = "실패")
     public ResponseMessage<OrderResponseDto> getOrderDetails(@PathVariable String email, @PathVariable Long id) {
-        OrderResponseDto order = orderService.getOrderDetails(email, id);
+        Order order = orderService.getOrderDetails(email, id);
         return new ResponseMessage<>(
                 "주문 상세 조회 성공",
                 String.valueOf(HttpStatus.OK.value()),
-                order
+                new OrderResponseDto(order)
         );
     }
 

@@ -30,7 +30,12 @@ public class OrderMenu {
 
     public void setOrder(Order order) {
         this.order = order;
-        order.addOrderMenu(this);
+    }
+
+    public void update(Menu menu, int quantity) {
+        this.menu = menu;
+        this.quantity = quantity;
+        this.price = menu.getPrice();
     }
 
     public OrderMenu(Menu menu, int quantity, int price) {

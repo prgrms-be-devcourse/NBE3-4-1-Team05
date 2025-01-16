@@ -32,6 +32,17 @@ public class MenuAdminController {
                 rsMenus
         );
     }
+    @GetMapping("/{id}")
+    public ResponseMessage<MenuResponseDto> getMenuById(@PathVariable("id") Long id) {
+        Menu menu = menuService.getMenuById(id);
+        MenuResponseDto rsMenu = new MenuResponseDto(menu);
+
+        return new ResponseMessage<>(
+                String.format("%s번 메뉴가 성공적으로 조회되었습니다.", id),
+                String.valueOf(HttpStatus.OK.value()),
+                rsMenu
+        );
+    }
 
     @Transactional
     @PostMapping("/")

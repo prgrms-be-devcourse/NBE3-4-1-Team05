@@ -12,5 +12,4 @@ public class OrderUpdateRequestDto {
     private String email;
     private String address;
     private List<CartMenuDto> omlist;
-
 }
