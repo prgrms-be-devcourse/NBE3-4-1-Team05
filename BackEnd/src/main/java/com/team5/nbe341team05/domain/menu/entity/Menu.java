@@ -15,33 +15,49 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Menu extends BaseTime {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_id")
-    private Long id;                 // 기본 키
+    private Long id;            // 기본 키
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<CartMenu> cartMenus = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "menu")
+
+    @OneToMany(mappedBy = "menu", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<OrderMenu> orderMenus = new ArrayList<>();
 
     @NonNull
-    private String productName;      // 제품명
+    private String productName; // 제품명
 
     @Column(length = 300)
     private String description;
 
-    private int price;               // 가격
+    private int price;          // 가격
 
-    private int stock;               // 재고 수량
+    private int stock;          // 재고 수량
 
-    private String image;            // 이미지 URL 또는 경로
+    private String image;       // 이미지 URL 또는 경로
+
+    public void decreaseStock(int diff) {
+        this.stock -= diff;
+    }
+
+    public void increaseStock(int diff) {
+        this.stock += diff;
+    }
 
     private long views;              // 메뉴 조회수
 
     public void plusView(){
         this.views++;
+    }
+
+    public void update(String productName, int price, int stock, String image) {
+        this.productName = productName;
+        this.price = price;
+        this.stock = stock;
+        this.image = image;
     }
 }
 

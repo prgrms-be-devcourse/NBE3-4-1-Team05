@@ -1,7 +1,7 @@
 package com.team5.nbe341team05.domain.menu.service;
 
+import com.team5.nbe341team05.common.exception.ServiceException;
 import com.team5.nbe341team05.domain.menu.dto.MenuRequestDto;
-import com.team5.nbe341team05.domain.menu.dto.MenuResponseDto;
 import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.repository.MenuRepository;
 import com.team5.nbe341team05.domain.menu.type.MenuSortType;
@@ -16,15 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Service
 public class MenuService {
     private final MenuRepository menuRepository;
     private static final int PAGE_SIZE = 10; // 한 페이지당 보여줄 메뉴 개수
 
     @Transactional
-    public Page<MenuResponseDto> getAllMenus(int page, MenuSortType sortType) {
+    public Page<Menu> getAllMenus(int page, MenuSortType sortType) {
         // 조회순, 최근등록순, 나중등록순, 가격높은순, 가격낮은순
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(sortType.getOrder());
@@ -41,28 +40,15 @@ public class MenuService {
         }
 
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(sorts));
-        Page<Menu> menuPage = menuRepository.findAll(pageable);
-        return menuPage.map(this::convertToDTO);
+        return menuRepository.findAll(pageable);
     }
 
     @Transactional
-    public MenuResponseDto getMenuById(Long id) {
+    public Menu getMenuById(Long id) {
         Menu menu = menuRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("id에 해당하는 메뉴를 찾을 수 없습니다. id : " + id));
         menu.plusView();
-        return convertToDTO(menu);
-    }
-
-    private MenuResponseDto convertToDTO(Menu menu) {
-        return MenuResponseDto.builder()
-                .id(menu.getId())
-                .productName(menu.getProductName())
-                .description(menu.getDescription())
-                .price(menu.getPrice())
-                .stock(menu.getStock())
-                .image(menu.getImage())
-                .views(menu.getViews())
-                .build();
+        return menu;
     }
 
     public long count() {
@@ -70,17 +56,32 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(MenuRequestDto requestDto) {
+    public Menu updateMenu(long id, MenuRequestDto menuRequestDto) {
+        Menu menu = menuRepository.findById(id).orElseThrow(() -> new ServiceException("404", "해당 상품을 찾을 수 없습니다."));
+        menu.update(
+                menuRequestDto.getProductName(),
+                menuRequestDto.getPrice(),
+                menuRequestDto.getStock(),
+                menuRequestDto.getImage());
+        return menu;
+    }
+    @Transactional
+    public Menu create(MenuRequestDto menuRequestDto) {
         Menu menu = Menu.builder()
-                .productName(requestDto.getProductName())
-                .description(requestDto.getDescription())
-                .price(requestDto.getPrice())
-                .stock(requestDto.getStock())
-                .image(requestDto.getImage())
+                .productName(menuRequestDto.getProductName())
+                .description(menuRequestDto.getDescription())
+                .price(menuRequestDto.getPrice())
+                .stock(menuRequestDto.getStock())
+                .image(menuRequestDto.getImage())
                 .views(0)
                 .build();
         Menu saveMenu = menuRepository.save(menu);
 
         return saveMenu;
+    }
+    @Transactional
+    public void deleteMenu(Long id) {
+        Menu menu = menuRepository.findById(id).orElseThrow(()->new ServiceException("404","해당 상품을 찾을 수 없습니다."));
+        menuRepository.delete(menu);
     }
 }
