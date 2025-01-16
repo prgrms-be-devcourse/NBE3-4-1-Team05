@@ -1,5 +1,6 @@
 package com.team5.nbe341team05.domain.menu.entity;
 
+import com.team5.nbe341team05.common.jpa.entity.BaseTime;
 import com.team5.nbe341team05.domain.cartMenu.entity.CartMenu;
 import com.team5.nbe341team05.domain.orderMenu.entity.OrderMenu;
 import jakarta.persistence.*;
@@ -13,16 +14,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Menu {
+public class Menu extends BaseTime {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_id")
     private Long id;            // 기본 키
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<CartMenu> cartMenus = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "menu")
+
+    @OneToMany(mappedBy = "menu", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<OrderMenu> orderMenus = new ArrayList<>();
 
     @NonNull
@@ -44,8 +46,6 @@ public class Menu {
     public void increaseStock(int diff) {
         this.stock += diff;
     }
-  
-    private String image;            // 이미지 URL 또는 경로
 
     private long views;              // 메뉴 조회수
 
