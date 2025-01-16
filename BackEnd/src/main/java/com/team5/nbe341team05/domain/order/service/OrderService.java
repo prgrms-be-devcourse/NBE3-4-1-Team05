@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -36,22 +35,27 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(OrderDto orderDto) {
+
+        // 장바구니 생성 및 저장
         Cart cart = new Cart();
         cartRepository.save(cart);
 
+        // 메뉴 검증 및 카트 메뉴 추가
         for (CartMenuDto cartMenuDto : orderDto.getMenus()) {
             Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
 
             if (menu.getStock() < cartMenuDto.getQuantity()) {
-                throw new ServiceException("400", "상품 재고가 부족합니다.");
+                throw new ServiceException("404", "상품 재고가 부족합니다.");
             }
             menu.decreaseStock(cartMenuDto.getQuantity());
             CartMenu cartMenu = new CartMenu(menu, cartMenuDto.getQuantity());
             cart.addCartMenu(cartMenu);
         }
 
+        // 배송 상태
         boolean orderStatus = checkTime();
 
+        // 주문 생성
         Order order = Order.builder()
                 .email(orderDto.getEmail())
                 .address(orderDto.getAddress())
@@ -59,71 +63,69 @@ public class OrderService {
                 .totalPrice(0)
                 .build();
 
+        // 주문 메뉴 추가
         for (CartMenu cartMenu : cart.getCartMenus()) {
-
             OrderMenu orderMenu = new OrderMenu(cartMenu.getMenu(), cartMenu.getQuantity(), cartMenu.getMenu().getPrice());
             order.addOrderMenu(orderMenu);
         }
 
+        // 총 금액 계산, 주문 장저
         order.calculateTotalPrice();
         orderRepository.save(order);
+
+        // 장바구니 초기화
         cart.clear();
 
         return order;
     }
 
     @Transactional(readOnly = true)
-    public List<OrderResponseDto> getOrdersByEmail(String email) {
-        Optional<List<Order>> orders = orderRepository.findByEmailOrderByIdDesc(email);
+    public List<Order> getOrdersByEmail(String email) {
+        List<Order> orders = orderRepository.findByEmailOrderByIdDesc(email);
         if (orders.isEmpty()) {
             throw new ServiceException("404", "해당 이메일을 찾을 수 없습니다.");
         }
-        return orders.get().stream()
-                .map(OrderResponseDto::new)
-                .collect(Collectors.toList());
+        return orders;
     }
 
     @Transactional(readOnly = true)
-    public OrderResponseDto getOrderDetails(String email, Long id) {
-        Order order = orderRepository.findByEmailAndId(email, id)
+    public Order getOrderDetails(String email, Long id) {
+        return orderRepository.findByEmailAndId(email, id)
                 .orElseThrow(() -> new ServiceException("404", "해당 이메일과 주문 번호로 주문을 찾을 수 없습니다."));
-        return new OrderResponseDto(order);
     }
 
     @Transactional
     public OrderResponseDto updateOrder(String email, Long id, OrderUpdateRequestDto updateRequestDto) {
-        if (!checkTime()) {
-            throw new ServiceException("400", "주문수정은 오후 2시 이후 주문건만 가능합니다.");
+        Order order = orderRepository.findByEmailAndId(email, id).orElseThrow(() -> new ServiceException("404", "해당 이메일과 주문 번호로 주문을 찾을 수 없습니다."));
+        if (!order.isDeliveryStatus()) {
+            throw new ServiceException("404", "주문수정은 오후 2시 이후 주문건만 가능합니다.");
         }
-
-        Order order = orderRepository.findByEmailAndId(email, id)
-                .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
 
         for (CartMenuDto cartMenuDto : updateRequestDto.getOmlist()) {
             Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
-        }
 
-        for (OrderMenu orderMenu : order.getOrderMenus()) {
-            Menu menu = orderMenu.getMenu();
-            int prevQuantity = orderMenu.getQuantity();
-            int newQuantity = updateRequestDto.getOmlist().stream()
-                    .filter(cartMenuDto -> cartMenuDto.getMenuId().equals(menu.getId()))
-                    .map(CartMenuDto::getQuantity)
+            OrderMenu existingOrderMenu = order.getOrderMenus().stream()
+                    .filter(orderMenu -> orderMenu.getMenu().getId().equals(cartMenuDto.getMenuId()))
                     .findFirst()
-                    .orElse(prevQuantity);
+                    .orElseThrow(() -> new ServiceException("404", "주문 내역에 해당 메뉴가 없습니다."));
+
+            int prevQuantity = existingOrderMenu.getQuantity();
+            int newQuantity = cartMenuDto.getQuantity();
 
             int diff = newQuantity - prevQuantity;
 
             if (diff > 0) {
                 if (menu.getStock() < diff) {
-                    throw new ServiceException("400", "상품 재고가 부족합니다.");
+                    throw new ServiceException("404", "상품 재고가 부족합니다.");
                 }
                 menu.decreaseStock(diff);
             } else {
                 menu.increaseStock(-diff);
             }
 
+            existingOrderMenu.update(menu, newQuantity);
         }
+
 
         order.calculateTotalPrice();
         order.updateOrder(updateRequestDto.getEmail(), updateRequestDto.getAddress());

@@ -52,6 +52,7 @@ public class Order extends BaseTime {
 
     public void addOrderMenu(OrderMenu orderMenu) {
         this.orderMenus.add(orderMenu);
+        orderMenu.setOrder(this);
     }
 
     public void calculateTotalPrice() {
@@ -59,4 +60,6 @@ public class Order extends BaseTime {
                 .mapToInt(orderMenu -> orderMenu.getMenu().getPrice() * orderMenu.getQuantity())
                 .sum();
     }
+
+
 }

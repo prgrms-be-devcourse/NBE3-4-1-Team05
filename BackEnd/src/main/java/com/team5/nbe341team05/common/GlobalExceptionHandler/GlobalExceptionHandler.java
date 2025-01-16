@@ -2,6 +2,8 @@ package com.team5.nbe341team05.common.GlobalExceptionHandler;
 
 import com.team5.nbe341team05.common.exceptions.ServiceException;
 import com.team5.nbe341team05.common.response.ResponseMessage;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ResponseMessage<Void>> handle(NoSuchElementException ex) {
         return createNotFoundResponse("해당 데이터가 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ResponseMessage<Void>> handle(ConstraintViolationException ex) {
+
+        String message = ex.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining(", "));
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ResponseMessage<>(message, "400", null));
     }
 
 
