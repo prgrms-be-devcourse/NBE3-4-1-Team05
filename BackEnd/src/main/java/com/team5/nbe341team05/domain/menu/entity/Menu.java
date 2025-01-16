@@ -21,10 +21,10 @@ public class Menu extends BaseTime {
     @Column(name = "menu_id")
     private Long id;            // 기본 키
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<CartMenu> cartMenus = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "menu")
+
+    @OneToMany(mappedBy = "menu", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<OrderMenu> orderMenus = new ArrayList<>();
 
     @NonNull

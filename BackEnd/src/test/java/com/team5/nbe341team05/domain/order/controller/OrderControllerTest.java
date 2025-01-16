@@ -1,6 +1,6 @@
 package com.team5.nbe341team05.domain.order.controller;
 
-import com.team5.nbe341team05.common.exceptions.ServiceException;
+import com.team5.nbe341team05.common.exception.ServiceException;
 import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.order.service.OrderService;
 import org.hamcrest.Matchers;
@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -177,7 +179,7 @@ public class OrderControllerTest {
     @DisplayName("email 주문 상세 조회 성공")
     void t6() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        get("/order/{email}/{id}", "dev@dev.com",5)
+                        get("/order/{email}/{id}", "dev@dev.com",2)
                                 .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
                                 )
                 )
@@ -188,7 +190,7 @@ public class OrderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("주문 상세 조회 성공"))
                 .andExpect(jsonPath("$.resultCode").value("200"))
-                .andExpect(jsonPath("$.data.id").value(5))
+                .andExpect(jsonPath("$.data.id").value(2))
                 .andExpect(jsonPath("$.data.email").value("dev@dev.com"))
                 .andExpect(jsonPath("$.data.address").isNotEmpty())
                 .andExpect(jsonPath("$.data.order_time").isNotEmpty())
@@ -217,10 +219,10 @@ public class OrderControllerTest {
     @Test
     @DisplayName("주문 수정 성공")
     void t8() throws Exception {
-        Order order = orderService.findById(5L);
+        Order order = orderService.findById(2L);
         order.updateStatus(true);
         ResultActions resultActions = mvc.perform(
-                        put("/order/{email}/{id}", "dev@dev.com",5)
+                        put("/order/{email}/{id}", "dev@dev.com", 2)
                                 .content("""
                                         {
                                           "email": "dev@dev.com",
@@ -260,10 +262,10 @@ public class OrderControllerTest {
     @Test
     @DisplayName("주문 수정 실패 with 오후 2시 이후 주문")
     void t9() throws Exception {
-        Order order = orderService.findById(5L);
+        Order order = orderService.findById(2L);
 
         ResultActions resultActions = mvc.perform(
-                        put("/order/{email}/{id}", "dev@dev.com",1)
+                        put("/order/{email}/{id}", "dev@dev.com", 2)
                                 .content("""
                                         {
                                           "email": "dev@dev.com",
@@ -287,16 +289,16 @@ public class OrderControllerTest {
 
         resultActions.andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("updateOrder"))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("주문수정은 오후 2시 이후 주문건만 가능합니다."))
-                .andExpect(jsonPath("$.resultCode").value("400"));
+                .andExpect(jsonPath("$.resultCode").value("404"));
     }
 
     @Test
     @DisplayName("주문 수정 실패 with 존재하지않는 주문번호")
     void t10() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        put("/order/{email}/{id}", "dev@dev.com",12)
+                        put("/order/{email}/{id}", "dev@dev.com", 12)
                                 .content("""
                                         {
                                           "email": "dev@dev.com",
@@ -318,9 +320,6 @@ public class OrderControllerTest {
                 )
                 .andDo(print());
 
-        Order order = orderService.findById(1L);
-        order.updateStatus(true);
-
         resultActions.andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("updateOrder"))
                 .andExpect(status().isNotFound())
@@ -332,7 +331,7 @@ public class OrderControllerTest {
     @DisplayName("주문 취소 성공")
     void t11() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        delete("/order/{email}/{id}", "dev@dev.com",1)
+                        delete("/order/{email}/{id}", "dev@dev.com", 2)
                                 .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
                                 )
                 )
@@ -349,7 +348,7 @@ public class OrderControllerTest {
     @DisplayName("주문 취소 실패 with 존재하지않는 주문번호")
     void t12() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        delete("/order/{email}/{id}", "dev@dev.com",12)
+                        delete("/order/{email}/{id}", "dev@dev.com", 12)
                                 .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
                                 )
                 )
@@ -360,6 +359,50 @@ public class OrderControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("해당 주문을 찾을 수 없습니다."))
                 .andExpect(jsonPath("$.resultCode").value("404"));
+    }
+
+    @Test
+    @DisplayName("어드민 주문 취소 성공")
+    @WithMockUser(username = "admin", password = "1234", roles = {"ADMIN"})
+    void t14() throws Exception {
+        ResultActions resultActions = mvc.perform(
+                        delete("/admin/order/{id}", 2)
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                )
+                .andDo(print());
+
+        resultActions.andExpect(handler().handlerType(OrderAdminController.class))
+                .andExpect(handler().methodName("cancelAdminOrder"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("주문이 성공적으로 취소되었습니다."))
+                .andExpect(jsonPath("$.resultCode").value("200"));
+    }
+
+    @Test
+    @DisplayName("어드민 주문 상세 조회 성공")
+    @WithMockUser(username = "admin", password = "1234", roles = {"ADMIN"})
+    void t15() throws Exception {
+//        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("admin", "1234", Collections.singletonList((new SimpleGrantedAuthority("ADMIN")))));
+        ResultActions resultActions = mvc.perform(
+                        get("/admin/order/{id}", 2)
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                )
+                .andDo(print());
+
+        resultActions.andExpect(handler().handlerType(OrderAdminController.class))
+                .andExpect(handler().methodName("getOrderDetailByIdForAdmin"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("주문 상세 조회 성공"))
+                .andExpect(jsonPath("$.resultCode").value("200"))
+                .andExpect(jsonPath("$.data.id").value(2))
+                .andExpect(jsonPath("$.data.email").isNotEmpty())
+                .andExpect(jsonPath("$.data.address").isNotEmpty())
+                .andExpect(jsonPath("$.data.order_time").isNotEmpty())
+                .andExpect(jsonPath("$.data.totalPrice").isNotEmpty())
+                .andExpect(jsonPath("$.data.deliveryStatus").isNotEmpty())
+                .andExpect(jsonPath("$.data.omlist").isNotEmpty());
     }
 
 

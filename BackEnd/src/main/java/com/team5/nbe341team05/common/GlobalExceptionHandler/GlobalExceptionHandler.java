@@ -1,6 +1,6 @@
 package com.team5.nbe341team05.common.GlobalExceptionHandler;
 
-import com.team5.nbe341team05.common.exceptions.ServiceException;
+import com.team5.nbe341team05.common.exception.ServiceException;
 import com.team5.nbe341team05.common.response.ResponseMessage;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

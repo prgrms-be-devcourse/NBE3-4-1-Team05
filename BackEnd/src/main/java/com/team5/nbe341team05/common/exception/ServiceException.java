@@ -1,4 +1,4 @@
-package com.team5.nbe341team05.common.exceptions;
+package com.team5.nbe341team05.common.exception;
 
 import com.team5.nbe341team05.common.response.ResponseMessage;
 

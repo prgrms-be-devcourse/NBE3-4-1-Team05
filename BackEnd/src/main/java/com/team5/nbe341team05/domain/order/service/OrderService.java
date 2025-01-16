@@ -1,6 +1,6 @@
 package com.team5.nbe341team05.domain.order.service;
 
-import com.team5.nbe341team05.common.exceptions.ServiceException;
+import com.team5.nbe341team05.common.exception.ServiceException;
 import com.team5.nbe341team05.domain.cart.entity.Cart;
 import com.team5.nbe341team05.domain.cart.repository.CartRepository;
 import com.team5.nbe341team05.domain.cartMenu.dto.CartMenuDto;
