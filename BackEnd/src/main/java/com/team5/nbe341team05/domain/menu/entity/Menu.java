@@ -1,5 +1,6 @@
 package com.team5.nbe341team05.domain.menu.entity;
 
+import com.team5.nbe341team05.common.jpa.entity.BaseTime;
 import com.team5.nbe341team05.domain.cartMenu.entity.CartMenu;
 import com.team5.nbe341team05.domain.orderMenu.entity.OrderMenu;
 import jakarta.persistence.*;
@@ -13,7 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Menu {
+public class Menu extends BaseTime {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_id")

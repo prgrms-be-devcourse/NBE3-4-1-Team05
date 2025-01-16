@@ -24,11 +24,12 @@ public class MenuAdminController {
     @GetMapping
     public ResponseMessage<Page<MenuResponseDto>> getAllMenus(@RequestParam(defaultValue = "0") int page,
                                                               @RequestParam(defaultValue = "RECENT") MenuSortType sortType) {
-        Page<MenuResponseDto> menus = menuService.getAllMenus(page, sortType);
+        Page<Menu> menus = menuService.getAllMenus(page, sortType);
+        Page<MenuResponseDto> rsMenus = menus.map(MenuResponseDto::new);
         return new ResponseMessage<>(
                 "상품이 성공적으로 조회되었습니다.",
                 String.valueOf(HttpStatus.OK.value()),
-                menus
+                rsMenus
         );
     }
 
