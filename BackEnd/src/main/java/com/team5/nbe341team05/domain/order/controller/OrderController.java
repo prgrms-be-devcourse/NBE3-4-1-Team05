@@ -23,9 +23,9 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    @Operation(summary = "주문 생성", description = "주문을 생성합니다")
+    @Operation(summary = "주문 생성", description = "새로운 주문을 생성합니다")
     @ApiResponse(responseCode = "201", description = "성공")
-    @ApiResponse(responseCode = "404", description = "실패")
+    @ApiResponse(responseCode = "400", description = "실패")
     public ResponseMessage<OrderResponseDto> createOrder(@RequestBody OrderDto orderDto) {
         Order order = orderService.createOrder(orderDto);
 
@@ -38,6 +38,8 @@ public class OrderController {
 
     @GetMapping("/{email}")
     @Operation(summary = "주문 리스트 조회", description = "주문 리스트를 조회합니다")
+    @ApiResponse(responseCode = "200", description = "성공")
+    @ApiResponse(responseCode = "404", description = "실패")
     public ResponseMessage<List<OrderResponseDto>> getOrdersByEmail(@PathVariable String email) {
         List<OrderResponseDto> orders = orderService.getOrdersByEmail(email);
         return new ResponseMessage<>(
@@ -49,6 +51,8 @@ public class OrderController {
 
     @GetMapping("/{email}/{id}")
     @Operation(summary = "주문 상세 조회", description = "주문 상세 내역을 조회합니다")
+    @ApiResponse(responseCode = "200", description = "성공")
+    @ApiResponse(responseCode = "404", description = "실패")
     public ResponseMessage<OrderResponseDto> getOrderDetails(@PathVariable String email, @PathVariable Long id) {
         OrderResponseDto order = orderService.getOrderDetails(email, id);
         return new ResponseMessage<>(
@@ -60,6 +64,8 @@ public class OrderController {
 
     @PutMapping("/{email}/{id}")
     @Operation(summary = "주문 수정", description = "주문 내역을 수정합니다")
+    @ApiResponse(responseCode = "200", description = "성공")
+    @ApiResponse(responseCode = "404", description = "실패")
     public ResponseMessage<OrderResponseDto> updateOrder(@PathVariable String email, @PathVariable Long id, @RequestBody OrderUpdateRequestDto updateRequestDto) {
         OrderResponseDto updatedOrder = orderService.updateOrder(email, id, updateRequestDto);
         return new ResponseMessage<>(
@@ -71,6 +77,8 @@ public class OrderController {
 
     @DeleteMapping("/{email}/{id}")
     @Operation(summary = "주문 취소", description = "주문을 취소합니다")
+    @ApiResponse(responseCode = "200", description = "성공")
+    @ApiResponse(responseCode = "404", description = "실패")
     public ResponseMessage<Void> cancelOrder(@PathVariable String email, @PathVariable Long id) {
         orderService.cancelOrder(email, id);
         return new ResponseMessage<>(
