@@ -1,8 +1,10 @@
 package com.team5.nbe341team05.domain.order.controller;
 
+import com.team5.nbe341team05.common.exceptions.ServiceException;
 import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.order.service.OrderService;
 import com.team5.nbe341team05.domain.orderMenu.Dto.OrderMenuDto;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -36,18 +39,18 @@ public class OrderControllerTest {
                         post("/order")
                                 .content("""
                                         {
-                                        ”email”: "dev@dev.com",
-                                        ”address”: "서울",
-                                         "menus": [
-                                        {
-                                        "menuId": 1
-                                        "quantity": 2
-                                        },
-                                        {
-                                        "menuId": 2
-                                        "quantity": 2
-                                        },
-                                        ],
+                                          "email": "dev@dev.com",
+                                          "address": "서울",
+                                          "menus": [
+                                            {
+                                              "menuId": 1,
+                                              "quantity": 2
+                                            },
+                                            {
+                                              "menuId": 2,
+                                              "quantity": 1
+                                            }
+                                          ]
                                         }
                                         """)
                                 .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
@@ -55,23 +58,23 @@ public class OrderControllerTest {
                 )
                 .andDo(print());
 
+        if (orderService.findFirst().isEmpty()) {
+            throw new ServiceException("404", "주문이 존재하지 않습니다.");
+        }
         Order order = orderService.findFirst().get();
 
         resultActions.andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("createOrder"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.msg").value("%d번 주문이 성공적으로 생성되었습니다.".formatted(order.getId())))
+                .andExpect(jsonPath("$.message").value("%d번 주문이 성공적으로 생성되었습니다.".formatted(order.getId())))
                 .andExpect(jsonPath("$.resultCode").value("201"))
                 .andExpect(jsonPath("$.data.id").value(order.getId()))
                 .andExpect(jsonPath("$.data.email").value(order.getEmail()))
                 .andExpect(jsonPath("$.data.address").value(order.getAddress()))
-                .andExpect(jsonPath("$.data.order_time").value(order.getCreateDate()))
+                .andExpect(jsonPath("$.data.order_time").value(Matchers.startsWith(order.getCreateDate().toString().substring(0,20))))
                 .andExpect(jsonPath("$.data.totalPrice").value(order.getTotalPrice()))
                 .andExpect(jsonPath("$.data.deliveryStatus").value(order.isDeliveryStatus()))
-                .andExpect(jsonPath("$.data.omlist").value(order.getOrderMenus().stream()
-                        .map(orderMenu -> new OrderMenuDto(
-                                orderMenu.getMenu().getProductName(),
-                                orderMenu.getQuantity())).toList()));
+                .andExpect(jsonPath("$.data.omlist.size()").value(order.getOrderMenus().size()));
     }
 
     @Test

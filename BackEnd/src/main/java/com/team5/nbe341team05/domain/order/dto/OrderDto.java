@@ -11,5 +11,5 @@ import java.util.List;
 public class OrderDto {
     private String email;
     private String address;
-    private List<CartMenuDto> products;
+    private List<CartMenuDto> menus;
 }

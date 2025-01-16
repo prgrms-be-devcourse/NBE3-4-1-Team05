@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Order", description = "Order API")
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/order")
+@Tag(name = "Order", description = "Order API")
+@RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
 

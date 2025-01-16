@@ -37,13 +37,13 @@ public class Order extends BaseTime {
 
     private int totalPrice;          // 총 주문 가격
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<OrderMenu> orderMenus = new ArrayList<>();
 
-    public void updateOrder(String email, String address,int totalPrice) {
+    public void updateOrder(String email, String address) {
         this.email = email;
         this.address = address;
-        this.totalPrice = totalPrice;
     }
 
     public void updateStatus(boolean deliveryStatus) {
@@ -52,10 +52,11 @@ public class Order extends BaseTime {
 
     public void addOrderMenu(OrderMenu orderMenu) {
         this.orderMenus.add(orderMenu);
-        orderMenu.setOrder(this);
     }
 
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
+    public void calculateTotalPrice() {
+        this.totalPrice = this.orderMenus.stream()
+                .mapToInt(orderMenu -> orderMenu.getMenu().getPrice() * orderMenu.getQuantity())
+                .sum();
     }
 }

@@ -39,7 +39,7 @@ public class OrderService {
         Cart cart = new Cart();
         cartRepository.save(cart);
 
-        for (CartMenuDto cartMenuDto : orderDto.getProducts()) {
+        for (CartMenuDto cartMenuDto : orderDto.getMenus()) {
             Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
 
             if (menu.getStock() < cartMenuDto.getQuantity()) {
@@ -52,8 +52,6 @@ public class OrderService {
 
         boolean orderStatus = checkTime();
 
-        int totalPrice = 0;
-
         Order order = Order.builder()
                 .email(orderDto.getEmail())
                 .address(orderDto.getAddress())
@@ -62,15 +60,12 @@ public class OrderService {
                 .build();
 
         for (CartMenu cartMenu : cart.getCartMenus()) {
-            int price = cartMenu.getMenu().getPrice();
-            int tPrice = price * cartMenu.getQuantity();
 
             OrderMenu orderMenu = new OrderMenu(cartMenu.getMenu(), cartMenu.getQuantity(), cartMenu.getMenu().getPrice());
             order.addOrderMenu(orderMenu);
-            totalPrice += tPrice;
         }
 
-        order.setTotalPrice(totalPrice);
+        order.calculateTotalPrice();
         orderRepository.save(order);
         cart.clear();
 
@@ -104,10 +99,9 @@ public class OrderService {
         Order order = orderRepository.findByEmailAndId(email, id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
 
-        int totalPrice = 0;
-
         for (CartMenuDto cartMenuDto : updateRequestDto.getOmlist()) {
             Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
+        }
 
         for (OrderMenu orderMenu : order.getOrderMenus()) {
             Menu menu = orderMenu.getMenu();
@@ -129,12 +123,10 @@ public class OrderService {
                 menu.increaseStock(-diff);
             }
 
-            int price = menu.getPrice();
-            int tPrice = price * newQuantity;
-            totalPrice += tPrice;
         }
 
-        order.updateOrder(updateRequestDto.getEmail(), updateRequestDto.getAddress(), totalPrice);
+        order.calculateTotalPrice();
+        order.updateOrder(updateRequestDto.getEmail(), updateRequestDto.getAddress());
         orderRepository.save(order);
 
         return new OrderResponseDto(order);
