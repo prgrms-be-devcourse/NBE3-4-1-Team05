@@ -1,5 +1,6 @@
 package com.team5.nbe341team05.domain.menu.service;
 
+import com.team5.nbe341team05.common.exception.ServiceException;
 import com.team5.nbe341team05.domain.menu.dto.MenuRequestDto;
 import com.team5.nbe341team05.domain.menu.dto.MenuResponseDto;
 import com.team5.nbe341team05.domain.menu.entity.Menu;
@@ -16,9 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Service
 public class MenuService {
     private final MenuRepository menuRepository;
     private static final int PAGE_SIZE = 10; // 한 페이지당 보여줄 메뉴 개수
@@ -70,17 +70,32 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(MenuRequestDto requestDto) {
+    public Menu updateMenu(long id, MenuRequestDto menuRequestDto) {
+        Menu menu = menuRepository.findById(id).orElseThrow(() -> new ServiceException("404", "해당 상품을 찾을 수 없습니다."));
+        menu.update(
+                menuRequestDto.getProductName(),
+                menuRequestDto.getPrice(),
+                menuRequestDto.getStock(),
+                menuRequestDto.getImage());
+        return menu;
+    }
+    @Transactional
+    public Menu create(MenuRequestDto menuRequestDto) {
         Menu menu = Menu.builder()
-                .productName(requestDto.getProductName())
-                .description(requestDto.getDescription())
-                .price(requestDto.getPrice())
-                .stock(requestDto.getStock())
-                .image(requestDto.getImage())
+                .productName(menuRequestDto.getProductName())
+                .description(menuRequestDto.getDescription())
+                .price(menuRequestDto.getPrice())
+                .stock(menuRequestDto.getStock())
+                .image(menuRequestDto.getImage())
                 .views(0)
                 .build();
         Menu saveMenu = menuRepository.save(menu);
 
         return saveMenu;
+    }
+    @Transactional
+    public void deleteMenu(Long id) {
+        Menu menu = menuRepository.findById(id).orElseThrow(()->new ServiceException("404","해당 상품을 찾을 수 없습니다."));
+        menuRepository.delete(menu);
     }
 }

@@ -14,6 +14,10 @@ import com.team5.nbe341team05.domain.order.entity.Order;
 import com.team5.nbe341team05.domain.order.repository.OrderRepository;
 import com.team5.nbe341team05.domain.orderMenu.entity.OrderMenu;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +27,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class OrderService {
     private final CartRepository cartRepository;
     private final MenuRepository menuRepository;
@@ -36,7 +40,7 @@ public class OrderService {
         cartRepository.save(cart);
 
         for (CartMenuDto cartMenuDto : orderDto.getProducts()) {
-            Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
+            Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
 
             if (menu.getStock() < cartMenuDto.getQuantity()) {
                 throw new ServiceException("400", "상품 재고가 부족합니다.");
@@ -94,13 +98,16 @@ public class OrderService {
     @Transactional
     public OrderResponseDto updateOrder(String email, Long id, OrderUpdateRequestDto updateRequestDto) {
         if (!checkTime()) {
-            throw new ServiceException("400", "주문수정은 오후 2시이후 주문건만 가능합니다.");
+            throw new ServiceException("400", "주문수정은 오후 2시 이후 주문건만 가능합니다.");
         }
 
         Order order = orderRepository.findByEmailAndId(email, id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
 
         int totalPrice = 0;
+
+        for (CartMenuDto cartMenuDto : updateRequestDto.getOmlist()) {
+            Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
 
         for (OrderMenu orderMenu : order.getOrderMenus()) {
             Menu menu = orderMenu.getMenu();
@@ -149,7 +156,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Order findById(Long id) {
-        return orderRepository.findById(id).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
+        return orderRepository.findById(id).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
     }
 
     @Scheduled(cron = "0 0 14 * * *") // 매일 14:00 실행
@@ -171,5 +178,25 @@ public class OrderService {
 
     public Optional<Order> findFirst() {
         return orderRepository.findFirstByOrderByIdDesc();
+    }
+
+    public Page<OrderResponseDto> getPagedOrders(int page, int size, String sortBy, String sortDir) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return orderRepository.findAll(pageable).map(OrderResponseDto::new);
+    }
+
+    @Transactional
+    public void cancelAdminOrder(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
+        this.orderRepository.delete(order);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderResponseDto getOrderDetailsForAdmin(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ServiceException("404", "해당 이메일과 주문 번호로 주문을 찾을 수 없습니다."));
+        return new OrderResponseDto(order);
     }
 }
