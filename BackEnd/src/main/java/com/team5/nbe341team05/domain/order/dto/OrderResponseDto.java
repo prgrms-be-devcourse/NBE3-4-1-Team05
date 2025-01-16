@@ -23,7 +23,7 @@ public class OrderResponseDto {
         this.id = order.getId();
         this.email = order.getEmail();
         this.address = order.getAddress();
-        this.order_time = order.getOrderTime();
+        this.order_time = order.getCreateDate();
         this.totalPrice = order.getTotalPrice();
         this.deliveryStatus = order.isDeliveryStatus();
         this.omlist = order.getOrderMenus().stream()
