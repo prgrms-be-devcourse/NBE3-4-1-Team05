@@ -106,10 +106,7 @@ public class OrderService {
 
         int totalPrice = 0;
 
-        for (CartMenuDto cartMenuDto : updateRequestDto.getOmlist()) {
-            Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404", "상품을 찾을 수 없습니다."));
-
-        for (OrderMenu orderMenu : order.getOrderMenus()) {
+        for (OrderMenu orderMenu : order.getOrderMenus()) { // 첫 번째 루프 시작
             Menu menu = orderMenu.getMenu();
             int prevQuantity = orderMenu.getQuantity();
             int newQuantity = updateRequestDto.getOmlist().stream()
@@ -132,7 +129,7 @@ public class OrderService {
             int price = menu.getPrice();
             int tPrice = price * newQuantity;
             totalPrice += tPrice;
-        }
+        } // 첫 번째 루프 종료
 
         order.updateOrder(updateRequestDto.getEmail(), updateRequestDto.getAddress(), totalPrice);
         orderRepository.save(order);
