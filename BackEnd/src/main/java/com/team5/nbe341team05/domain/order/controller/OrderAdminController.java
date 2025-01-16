@@ -21,7 +21,7 @@ public class OrderAdminController {
 
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseMessage<OrderResponseDto> cancelOrder(@PathVariable long id) {
+    public ResponseMessage<OrderResponseDto> cancelAdminOrder(@PathVariable long id) {
         orderService.cancelAdminOrder(id);
         return new ResponseMessage<>(
                 "주문이 성공적으로 취소되었습니다.",
@@ -43,7 +43,7 @@ public class OrderAdminController {
 
     @Transactional(readOnly = true)
     @GetMapping("/{id}")
-    public ResponseMessage<OrderResponseDto> getOrderDetailById(@PathVariable long id) {
+    public ResponseMessage<OrderResponseDto> getOrderDetailByIdForAdmin(@PathVariable long id) {
         OrderResponseDto order = this.orderService.getOrderDetailsForAdmin(id);
         return new ResponseMessage<>("주문 상세 조회 성공", String.valueOf(HttpStatus.OK.value()), order);
     }

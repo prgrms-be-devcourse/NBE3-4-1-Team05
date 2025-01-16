@@ -187,13 +187,19 @@ public class OrderService {
     public void cancelAdminOrder(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
-        this.orderRepository.delete(order);
+
+        for (OrderMenu orderMenu : order.getOrderMenus()) {
+            Menu menu = orderMenu.getMenu();
+            int prevQuantity = orderMenu.getQuantity();
+            menu.increaseStock(prevQuantity);
+        }
+        orderRepository.delete(order);
     }
 
     @Transactional(readOnly = true)
     public OrderResponseDto getOrderDetailsForAdmin(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new ServiceException("404", "해당 이메일과 주문 번호로 주문을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ServiceException("404", "해당 주문 번호로 주문을 찾을 수 없습니다."));
         return new OrderResponseDto(order);
     }
 }

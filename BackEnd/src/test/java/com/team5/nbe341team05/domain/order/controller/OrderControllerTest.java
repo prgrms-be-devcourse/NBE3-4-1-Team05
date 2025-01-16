@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,8 +147,8 @@ public class OrderControllerTest {
     void t4() throws Exception {
         ResultActions resultActions = mvc.perform(
                         get("/order/{email}", "dev@dev.com")
-                        .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
-                        ))
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
+                                ))
                 .andDo(print());
 
         resultActions.andExpect(handler().handlerType(OrderController.class))
@@ -160,9 +162,9 @@ public class OrderControllerTest {
     void t5() throws Exception {
         ResultActions resultActions = mvc.perform(
                         get("/order/{email}", "asfasfasf")
-                        .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
-                        )
-        )
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
+                                )
+                )
                 .andDo(print());
 
         resultActions.andExpect(handler().handlerType(OrderController.class))
@@ -176,7 +178,7 @@ public class OrderControllerTest {
     @DisplayName("email 주문 상세 조회 성공")
     void t6() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        get("/order/{email}{id}", "dev@dev.com",1)
+                        get("/order/{email}{id}", "dev@dev.com", 1)
                                 .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
                                 )
                 )
@@ -200,7 +202,7 @@ public class OrderControllerTest {
     @DisplayName("email 주문 상세 조회 실패")
     void t7() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        get("/order/{email}{id}", "dev@dev.com",10)
+                        get("/order/{email}{id}", "dev@dev.com", 10)
                                 .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
                                 )
                 )
@@ -217,7 +219,7 @@ public class OrderControllerTest {
     @DisplayName("주문 수정 성공")
     void t8() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        put("/order/{email}{id}", "dev@dev.com",1)
+                        put("/order/{email}{id}", "dev@dev.com", 1)
                                 .content("""
                                         {
                                         ”email”: "dev12@dev.com",
@@ -266,10 +268,10 @@ public class OrderControllerTest {
         order.updateStatus(true);
 
         ResultActions resultActions = mvc.perform(
-                        put("/order/{email}{id}", "dev@dev.com",1)
+                        put("/order/{email}{id}", "dev@dev.com", 1)
                                 .content("""
                                         {
-                                        ”email”: "dev12@dev.com",                         
+                                        ”email”: "dev12@dev.com",
                                         ”address”: "서울(수정)",
                                          "menus": [
                                         {
@@ -299,7 +301,7 @@ public class OrderControllerTest {
     @DisplayName("주문 수정 실패 with 존재하지않는 주문번호")
     void t10() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        put("/order/{email}{id}", "dev@dev.com",12)
+                        put("/order/{email}{id}", "dev@dev.com", 12)
                                 .content("""
                                         {
                                         ”email”: "dev12@dev.com",
@@ -335,7 +337,7 @@ public class OrderControllerTest {
     @DisplayName("주문 취소 성공")
     void t11() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        put("/order/{email}{id}", "dev@dev.com",1)
+                        put("/order/{email}{id}", "dev@dev.com", 1)
                                 .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
                                 )
                 )
@@ -352,7 +354,7 @@ public class OrderControllerTest {
     @DisplayName("주문 취소 실패 with 존재하지않는 주문번호")
     void t12() throws Exception {
         ResultActions resultActions = mvc.perform(
-                        put("/order/{email}{id}", "dev@dev.com",12)
+                        put("/order/{email}{id}", "dev@dev.com", 12)
                                 .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
                                 )
                 )
@@ -363,6 +365,50 @@ public class OrderControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.msg").value("해당 주문을 찾을 수 없습니다."))
                 .andExpect(jsonPath("$.resultCode").value("404"));
+    }
+
+    @Test
+    @DisplayName("어드민 주문 취소 성공")
+    @WithMockUser(username = "admin", password = "1234", roles = {"ADMIN"})
+    void t14() throws Exception {
+        ResultActions resultActions = mvc.perform(
+                        delete("/admin/order/{id}", 1)
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                )
+                .andDo(print());
+
+        resultActions.andExpect(handler().handlerType(OrderAdminController.class))
+                .andExpect(handler().methodName("cancelAdminOrder"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.msg").value("주문이 성공적으로 취소되었습니다."))
+                .andExpect(jsonPath("$.resultCode").value("200"));
+    }
+
+    @Test
+    @DisplayName("어드민 주문 상세 조회 성공")
+    @WithMockUser(username = "admin", password = "1234", roles = {"ADMIN"})
+    void t15() throws Exception {
+//        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("admin", "1234", Collections.singletonList((new SimpleGrantedAuthority("ADMIN")))));
+        ResultActions resultActions = mvc.perform(
+                        get("/admin/order/{id}", 1)
+                                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
+                                )
+                )
+                .andDo(print());
+
+        resultActions.andExpect(handler().handlerType(OrderAdminController.class))
+                .andExpect(handler().methodName("getOrderDetailByIdForAdmin"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.msg").value("주문 상세 조회 성공"))
+                .andExpect(jsonPath("$.resultCode").value("201"))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.email").isNotEmpty())
+                .andExpect(jsonPath("$.data.address").isNotEmpty())
+                .andExpect(jsonPath("$.data.order_time").isNotEmpty())
+                .andExpect(jsonPath("$.data.totalPrice").isNotEmpty())
+                .andExpect(jsonPath("$.data.deliveryStatus").isNotEmpty())
+                .andExpect(jsonPath("$.data.omlist").isNotEmpty());
     }
 
 
