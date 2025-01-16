@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableScheduling  // 스케줄링 활성화
+@EnableJpaAuditing
 public class Nbe341Team05Application {
 
     public static void main(String[] args) {
