@@ -2,6 +2,7 @@ package com.team5.nbe341team05.domain.menu.controller;
 
 import com.team5.nbe341team05.common.response.ResponseMessage;
 import com.team5.nbe341team05.domain.menu.dto.MenuResponseDto;
+import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.service.MenuService;
 import com.team5.nbe341team05.domain.menu.type.MenuSortType;
 import lombok.RequiredArgsConstructor;
@@ -18,21 +19,25 @@ public class MenuController {
     @GetMapping
     public ResponseMessage<Page<MenuResponseDto>> getAllMenus(@RequestParam(defaultValue = "0") int page,
                                                               @RequestParam(defaultValue = "RECENT")MenuSortType sortType) {
-        Page<MenuResponseDto> menus = menuService.getAllMenus(page, sortType);
+        Page<Menu> menus = menuService.getAllMenus(page, sortType);
+        Page<MenuResponseDto> rsMenus = menus.map(MenuResponseDto::new);
+
         return new ResponseMessage<>(
                 "메뉴가 성공적으로 조회되었습니다.",
                 String.valueOf(HttpStatus.OK.value()),
-                menus
+                rsMenus
         );
     }
 
     @GetMapping("/{id}")
     public ResponseMessage<MenuResponseDto> getMenuById(@PathVariable("id") Long id) {
-        MenuResponseDto menu = menuService.getMenuById(id);
+        Menu menu = menuService.getMenuById(id);
+        MenuResponseDto rsMenu = new MenuResponseDto(menu);
+
         return new ResponseMessage<>(
                 String.format("%s번 메뉴가 성공적으로 조회되었습니다.", id),
                 String.valueOf(HttpStatus.OK.value()),
-                menu
+                rsMenu
         );
     }
 }
