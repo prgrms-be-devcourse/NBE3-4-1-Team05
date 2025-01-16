@@ -26,7 +26,7 @@ public class MenuAdminController {
                                                               @RequestParam(defaultValue = "RECENT") MenuSortType sortType) {
         Page<MenuResponseDto> menus = menuService.getAllMenus(page, sortType);
         return new ResponseMessage<>(
-                "메뉴가 성공적으로 조회되었습니다.",
+                "상품이 성공적으로 조회되었습니다.",
                 String.valueOf(HttpStatus.OK.value()),
                 menus
         );
