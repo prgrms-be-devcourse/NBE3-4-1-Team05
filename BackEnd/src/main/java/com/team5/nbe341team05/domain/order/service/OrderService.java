@@ -38,16 +38,15 @@ public class OrderService {
         for (CartMenuDto cartMenuDto : orderDto.getProducts()) {
             Menu menu = menuRepository.findById(cartMenuDto.getMenuId()).orElseThrow(() -> new ServiceException("404","상품을 찾을 수 없습니다."));
 
-            CartMenu cartMenu = new CartMenu(menu, cartMenuDto.getQuantity());
-            cart.addCartMenu(cartMenu);
             if (menu.getStock() < cartMenuDto.getQuantity()) {
                 throw new ServiceException("400", "상품 재고가 부족합니다.");
             }
             menu.decreaseStock(cartMenuDto.getQuantity());
+            CartMenu cartMenu = new CartMenu(menu, cartMenuDto.getQuantity());
+            cart.addCartMenu(cartMenu);
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        boolean orderStatus = now.getHour() < 14;
+        boolean orderStatus = checkTime();
 
         int totalPrice = 0;
 
