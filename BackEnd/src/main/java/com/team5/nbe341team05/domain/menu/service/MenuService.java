@@ -2,7 +2,6 @@ package com.team5.nbe341team05.domain.menu.service;
 
 import com.team5.nbe341team05.common.exception.ServiceException;
 import com.team5.nbe341team05.domain.menu.dto.MenuRequestDto;
-import com.team5.nbe341team05.domain.menu.dto.MenuResponseDto;
 import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.repository.MenuRepository;
 import com.team5.nbe341team05.domain.menu.type.MenuSortType;
@@ -24,7 +23,7 @@ public class MenuService {
     private static final int PAGE_SIZE = 10; // 한 페이지당 보여줄 메뉴 개수
 
     @Transactional
-    public Page<MenuResponseDto> getAllMenus(int page, MenuSortType sortType) {
+    public Page<Menu> getAllMenus(int page, MenuSortType sortType) {
         // 조회순, 최근등록순, 나중등록순, 가격높은순, 가격낮은순
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(sortType.getOrder());
@@ -41,28 +40,15 @@ public class MenuService {
         }
 
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(sorts));
-        Page<Menu> menuPage = menuRepository.findAll(pageable);
-        return menuPage.map(this::convertToDTO);
+        return menuRepository.findAll(pageable);
     }
 
     @Transactional
-    public MenuResponseDto getMenuById(Long id) {
+    public Menu getMenuById(Long id) {
         Menu menu = menuRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("id에 해당하는 메뉴를 찾을 수 없습니다. id : " + id));
         menu.plusView();
-        return convertToDTO(menu);
-    }
-
-    private MenuResponseDto convertToDTO(Menu menu) {
-        return MenuResponseDto.builder()
-                .id(menu.getId())
-                .productName(menu.getProductName())
-                .description(menu.getDescription())
-                .price(menu.getPrice())
-                .stock(menu.getStock())
-                .image(menu.getImage())
-                .views(menu.getViews())
-                .build();
+        return menu;
     }
 
     public long count() {
