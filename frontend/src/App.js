@@ -1,6 +1,7 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./login";
+import LoginPage from "./components/login";
+import AddMenuPage from "./screens/addMenu";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         {/* 기본 경로 설정 */}
         <Route path="/" element={<h1>Welcome to the Home Page</h1>} />
+        <Route path="/addMenu" element={<AddMenuPage/>}/>
       </Routes>
     </Router>
   );

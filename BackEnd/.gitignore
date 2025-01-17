@@ -40,6 +40,8 @@ out/
 ### Custom ###
 db_dev.mv.db
 db_dev.trace.db
+db_dev.mv2.db
+db_dev.trace2.db
 
 # Exclude properties files
 **/src/main/resources/application.yml
