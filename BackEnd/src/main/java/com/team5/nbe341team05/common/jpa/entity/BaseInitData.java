@@ -1,7 +1,6 @@
 package com.team5.nbe341team05.common.jpa.entity;
 
 import com.team5.nbe341team05.domain.cart.service.CartService;
-import com.team5.nbe341team05.domain.menu.dto.MenuRequestDto;
 import com.team5.nbe341team05.domain.menu.service.MenuService;
 import com.team5.nbe341team05.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,25 +24,24 @@ public class BaseInitData {
     @Bean
     public ApplicationRunner baseInitDataApplicationRunner() {
         return args -> {
-            self.makeSampleMenus();
+            //self.makeSampleMenus();
         };
     }
 
-    @Transactional
-    public void makeSampleMenus(){
-        if(menuService.count() > 0) return;
-
-        for(int i = 1; i <= 20; i++){
-            MenuRequestDto menuRequestDto = MenuRequestDto.builder()
-                    .productName("Menu" + i)
-                    .description("Menu description" + i)
-                    .price(1000 * i)
-                    .stock(10)
-                    .image("img_src")
-                    .build();
-
-            menuService.create(menuRequestDto);
-        }
+//    @Transactional
+//    public void makeSampleMenus() throws IOException {
+//        if(menuService.count() > 0) return;
+//
+//        for(int i = 1; i <= 20; i++){
+//            MenuRequestDto menuRequestDto = MenuRequestDto.builder()
+//                    .productName("Menu" + i)
+//                    .description("Menu description" + i)
+//                    .price(1000 * i)
+//                    .stock(10)
+//                    .build();
+//
+//            menuService.create(menuRequestDto, file);
+//        }
 
 //        String[] menuTypes = {"커피", "주스", "스무디", "티", "에이드"};
 //        String[] descriptionsTemplate = {
@@ -68,5 +65,4 @@ public class BaseInitData {
 //                    "menu" + i + ".jpg" // menu1.jpg, menu2.jpg 등
 //            );
 //        }
-    }
 }

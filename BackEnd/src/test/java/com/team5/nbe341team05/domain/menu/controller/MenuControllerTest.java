@@ -1,24 +1,37 @@
 package com.team5.nbe341team05.domain.menu.controller;
 
 import com.team5.nbe341team05.common.response.ResponseMessage;
-import com.team5.nbe341team05.domain.menu.dto.MenuRequestDto;
 import com.team5.nbe341team05.domain.menu.dto.MenuResponseDto;
-import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.repository.MenuRepository;
 import com.team5.nbe341team05.domain.menu.service.MenuService;
 import com.team5.nbe341team05.domain.menu.type.MenuSortType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 @Transactional
+@AutoConfigureMockMvc
 class MenuControllerTest {
 
     @Autowired
@@ -29,27 +42,52 @@ class MenuControllerTest {
 
     @Autowired
     private MenuRepository menuRepository;
+    
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         menuRepository.deleteAll();
-        createSampleData();
+        //createSampleData();
     }
 
-    private void createSampleData() {
-        // 다양한 가격, 조회수를 가진 테스트 데이터 생성
-        Menu menu = menuService.create(new MenuRequestDto("아메리카노", "기본 커피", 3000, 100, "americano.jpg"));
-        menuService.create(new MenuRequestDto("카페라떼", "우유가 들어간 커피", 4000, 100, "latte.jpg"));
-        menuService.create(new MenuRequestDto("카푸치노", "거품이 많은 커피", 4500, 100, "cappuccino.jpg"));
-        menuService.create(new MenuRequestDto("에스프레소", "진한 커피", 2500, 100, "espresso.jpg"));
-        menuService.create(new MenuRequestDto("카라멜마끼아또", "달달한 커피", 5000, 100, "caramel.jpg"));
-
-        // 페이징 테스트를 위한 추가 데이터
-        for (int i = 6; i <= 15; i++) {
-            menuService.create(new MenuRequestDto("메뉴" + i,"설명" + i,i * 1000,100,"image" + i + ".jpg"));
+    private MultipartFile convertStringToMultipartFile(String filePath) {
+        if (filePath == null || filePath.isEmpty()) {
+            return null; // 이미지 경로가 없을 경우 null 반환
         }
-        menuService.getMenuById(menu.getId());
+
+        try {
+            File file = new File(filePath);
+            FileInputStream inputStream = new FileInputStream(file);
+
+            // MockMultipartFile로 변환
+            return new MockMultipartFile(
+                    "image",            // 필드명
+                    file.getName(),     // 원래 파일 이름
+                    "image/jpeg",       // MIME 타입 (적절히 변경 가능)
+                    inputStream         // 파일 데이터
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null; // 예외 발생 시 null 반환
+        }
     }
+
+//    private void createSampleData() throws IOException {
+//        // 다양한 가격, 조회수를 가진 테스트 데이터 생성
+//        menuService.create(new MenuRequestDto("아메리카노", "기본 커피", 3000, 100, convertStringToMultipartFile("uploads/images/americano.jpg")));
+//        menuService.create(new MenuRequestDto("카페라떼", "우유가 들어간 커피", 4000, 100, convertStringToMultipartFile("uploads/images/latte.jpg")));
+//        menuService.create(new MenuRequestDto("카푸치노", "거품이 많은 커피", 4500, 100, convertStringToMultipartFile("uploads/images/cappuccino.jpg")));
+//        menuService.create(new MenuRequestDto("에스프레소", "진한 커피", 2500, 100, convertStringToMultipartFile("uploads/images/espresso.jpg")));
+//        menuService.create(new MenuRequestDto("카라멜마끼아또", "달달한 커피", 5000, 100, convertStringToMultipartFile("uploads/images/caramel.jpg")));
+//
+//        // 페이징 테스트를 위한 추가 데이터
+//        for (int i = 6; i <= 15; i++) {
+//            menuService.create(new MenuRequestDto("메뉴" + i,"설명" + i, i * 1000,100,convertStringToMultipartFile("image" + i + ".jpg")));
+//        }
+//        menuService.getMenuById(menu.getId());
+//    }
 
     @Order(1)
     @Test
@@ -221,5 +259,53 @@ class MenuControllerTest {
         assertThat(overResponse.data().getNumber()).isEqualTo(1);  // 마지막 페이지(2페이지)
         assertThat(overResponse.data().getContent()).hasSize(5);   // 남은 5개 데이터
         assertThat(overResponse.data().getTotalElements()).isEqualTo(15);
+    }
+    @Order(12)
+    @Test
+    @DisplayName("이미지 저장")
+    void testSaveImage() throws IOException {
+        FileInputStream stream = new FileInputStream(new File("./sample.jpg"));
+        MultipartFile file =  new MockMultipartFile("sample.jpg","sample.jpg","jpg",stream.readAllBytes());
+        String filePath = menuService.saveImage(file);
+        System.out.println(filePath);
+    }
+
+    @Order(13)
+    @Test
+    @DisplayName("메뉴 생성 테스트")
+    @WithMockUser(username = "admin", password = "1234", roles = {"ADMIN"})
+    void createMenu() throws Exception {
+        MockMultipartFile testFile = new MockMultipartFile(
+                "image",
+                "test.jpg",
+                "image/jpeg",
+                "Test image".getBytes()
+        );
+
+        MockMultipartFile testJson = new MockMultipartFile(
+                "menu",
+                "",
+                "application/json",
+                """
+                 {
+                   "productName": "에스프레소",
+                   "description": "에스프레소 커피",
+                   "price" : 3000,
+                   "stock" : 100
+                 }
+                 """.getBytes());
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.multipart("/admin/menus")
+                .file(testFile)
+                        .file(testJson)
+                .contentType(new MediaType(MediaType.MULTIPART_FORM_DATA)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.message").value("상품이 성공적으로 생성되었습니다."))
+                .andExpect(jsonPath("$.data.productName").value("에스프레소"))
+                .andExpect(jsonPath("$.data.description").value("에스프레소 커피"))
+                .andExpect(jsonPath("$.data.price").value(3000))
+                .andExpect(jsonPath("$.data.stock").value(100))
+                .andDo(print());
     }
 }
