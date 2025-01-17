@@ -38,7 +38,5 @@
 }
 
 .main-container {
-  display: flex;
-  flex: 1;
-  padding-top: 64px; /* 네비게이션 바 높이만큼 여백 */
+  @apply flex flex-1 pt-16; /* padding-top: 64px를 테일윈드로 변환 */
 }
