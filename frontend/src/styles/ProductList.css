@@ -4,7 +4,8 @@
     flex-wrap: wrap;
     padding: 20px;
     gap: 20px;
-    width: 100%;
+    width: 100%; /* 사이드바 너비만큼 뺌 */
+    /*margin-left: 200px; !* 사이드바 너비만큼 여백 *!*/
 }
 
 

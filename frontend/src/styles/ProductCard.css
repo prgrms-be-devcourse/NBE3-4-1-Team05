@@ -4,7 +4,8 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    width: calc(50% - 10px); /* 2열 배치를 위해 수정 */
+    /*width: calc(50% - 10px); !* 2열 배치를 위해 수정 *!*/
+    width: 100%; /* width 100%로 수정 */
     margin-bottom: 20px;
 }
 

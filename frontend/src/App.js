@@ -1,23 +1,15 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
-import ProductList from "./components/ProductList";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MainMenuScreen from './screens/MainMenuScreen';
 import './App.css';
 
 function App() {
     return (
-        <BrowserRouter>
-            <div className="App">
-                <Navbar />
-                <div className="main-container">
-                    <Sidebar />
-                    <div className="content">
-                        <ProductList />
-                    </div>
-                </div>
-            </div>
-        </BrowserRouter>
+        <Router>
+            <Routes>
+                <Route path="/" element={<MainMenuScreen />} />
+            </Routes>
+        </Router>
     );
 }
 
