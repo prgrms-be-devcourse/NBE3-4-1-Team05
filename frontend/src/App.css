@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+.main-container {
+  display: flex;
+  flex: 1;
+  padding-top: 64px; /* 네비게이션 바 높이만큼 여백 */
+}
+
+.content {
+  margin-left: 240px; /* 사이드바 너비만큼 여백 */
+  margin-right: 40px; /* 사이드바 너비만큼 여백 */
+  width: calc(100% - 200px); /* 전체 너비에서 사이드바 너비를 뺀 만큼 설정 */
+  padding: 20px;
+}
