@@ -1,24 +1,17 @@
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "./login";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        {/* /login 경로에 LoginPage 컴포넌트를 렌더링 */}
+        <Route path="/login" element={<LoginPage />} />
+        {/* 기본 경로 설정 */}
+        <Route path="/" element={<h1>Welcome to the Home Page</h1>} />
+      </Routes>
+    </Router>
   );
 }
 
