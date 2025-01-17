@@ -9,6 +9,15 @@ const OrderDetail = () => {
   const email = location.state?.email;
   const [order, setOrder] = useState(null);
   const [error, setError] = useState(null);
+  const formatDateTime = (dateTime) => {
+    const date = new Date(dateTime);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1 필요
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  };
 
   useEffect(() => {
     const fetchOrderDetail = async () => {
@@ -26,7 +35,11 @@ const OrderDetail = () => {
   }, [email, id]);
 
   const handleModify = () => {
-    navigate(`/order/modify/${id}`, { state: { email } }); // 수정 화면으로 이동
+    if (!order.deliveryStatus) {
+      navigate(`/order/modify/${id}`, { state: { email } }); // 수정 화면으로 이동
+    } else {
+      alert("해당 주문은 이미 발송되어 수정이 불가합니다.");
+    }
   };
 
   const handleCancel = async () => {
@@ -49,47 +62,83 @@ const OrderDetail = () => {
   }
 
   return (
-    <div className="order-detail-container">
-      <h1 className="text-xl font-bold">주문내역서</h1>
-      <div className="order-detail-header">
-        <p>주문 상태: {order.deliveryStatus ? "배송중" : "배송 준비중"}</p>
-        <p>주문 일시: {order.order_time}</p>
+    <div
+      className="absolute bg-gray-100 rounded-lg p-8 shadow-lg"
+      style={{
+        width: "905px",
+        height: "950px",
+        left: "50px",
+        top: "55px",
+      }}
+    >
+      {/* 주문내역서 제목 */}
+      <h1 className="text-2xl font-bold absolute" style={{ left: "40px", top: "20px" }}>
+        주문내역서
+      </h1>
+
+      {/* 주문 상태와 시간 */}
+      <div className="bg-gray-200 p-4 rounded mt-20">
+        <p className="font-semibold">배송 상태: {order.deliveryStatus ? "배송중" : "배송 준비중"}</p>
+        <p>주문 일시: {formatDateTime(order.order_time)}</p>
       </div>
-      <div className="order-detail-products">
-        <h2>상품 내역</h2>
-        <ul>
+
+      {/* 상품 내역 */}
+      <div className="mt-8 bg-gray-50 p-4 rounded shadow">
+        <h2 className="font-semibold mb-4">상품 내역</h2>
+        <ul className="space-y-2">
           {order.omlist.map((item) => (
-            <li key={item.name}>
-              {item.name} - {item.quantity}개
+            <li key={item.name} className="flex justify-between">
+              <span>{item.name}</span>
+              <span>{item.quantity}개</span>
             </li>
           ))}
         </ul>
-        <p className="font-bold">총 결제 금액: {order.totalPrice}원</p>
+        <p className="font-bold text-right mt-4">총 결제 금액: {order.totalPrice}원</p>
       </div>
-      <div className="order-detail-footer">
-        <form>
-          <label>
-            이메일:
-            <input type="text" defaultValue={email} readOnly />
-          </label>
-          <label>
-            주소:
-            <input type="text" defaultValue={order.address} readOnly />
-          </label>
-        </form>
-        <p className="text-sm text-gray-500">
-          * 당일 오후 2시 이후 주문은 익일 배송됩니다.
-        </p>
+
+      {/* 이메일, 주소 폼 */}
+      <div className="mt-8 grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">이메일</label>
+          <input
+            type="text"
+            value={email}
+            readOnly
+            className="w-full border-gray-300 rounded p-2"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">주소</label>
+          <input
+            type="text"
+            value={order.address}
+            readOnly
+            className="w-full border-gray-300 rounded p-2"
+          />
+        </div>
       </div>
-      <div className="order-detail-actions">
+
+      {/* 안내 사항 */}
+      <p className="text-sm text-gray-500 mt-4">
+        * 당일 오후 2시 이후 주문은 익일 배송됩니다.
+      </p>
+
+      {/* 주문 수정 및 취소 버튼 */}
+      <div className="flex justify-end mt-6 space-x-4">
       <button
-          className="bg-blue-500 text-white p-2 rounded mr-2"
+    className="bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded"
+    onClick={() => navigate("/order/list", { state: { email } })}
+  >
+    돌아가기
+  </button>
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded"
           onClick={handleModify}
         >
           주문 수정
         </button>
         <button
-          className="bg-red-500 text-white p-2 rounded"
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded"
           onClick={handleCancel}
         >
           주문 취소

@@ -20,7 +20,7 @@ const OrderModify = () => {
         const response = await orderDetail(email, id);
         console.log(response.data); // API 응답 확인
         const orderData = response.data.data;
-    
+
         setOrder(orderData);
         setUpdatedEmail(orderData.email);
         setUpdatedAddress(orderData.address);
@@ -44,7 +44,6 @@ const OrderModify = () => {
       )
     );
   };
-  
 
   const handleSubmit = async () => {
     const updatedData = {
@@ -64,7 +63,7 @@ const OrderModify = () => {
       alert("주문이 성공적으로 수정되었습니다.");
       navigate("/order/list", { state: { email: updatedEmail } }); // 수정 후 주문 리스트로 이동
     } catch (err) {
-        console.error("Error while submitting:", err.response?.data || err.message);
+      console.error("Error while submitting:", err.response?.data || err.message);
       setError("주문 수정에 실패했습니다.");
     }
   };
@@ -78,49 +77,89 @@ const OrderModify = () => {
   }
 
   return (
-    <div>
-      <h1>주문 수정</h1>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <label>
-          이메일:
+    <div
+      className="absolute bg-gray-200 rounded-md shadow-lg p-8"
+      style={{
+        width: "695px",
+        height: "850px",
+        left: "140px",
+        top: "115px",
+      }}
+    >
+      <h1
+        className="font-semibold text-black mb-6"
+        style={{
+          width: "148px",
+          height: "39px",
+          fontFamily: "'Inter', sans-serif",
+          fontStyle: "normal",
+          fontWeight: 600,
+          fontSize: "32px",
+          lineHeight: "39px",
+        }}
+      >
+        주문 수정
+      </h1>
+      <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">이메일:</label>
           <input
             type="text"
             value={updatedEmail}
             onChange={(e) => setUpdatedEmail(e.target.value)}
+            className="w-full border rounded p-2 text-gray-700"
           />
-        </label>
-        <label>
-          주소:
+        </div>
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">주소:</label>
           <input
             type="text"
             value={updatedAddress}
             onChange={(e) => setUpdatedAddress(e.target.value)}
+            className="w-full border rounded p-2 text-gray-700"
           />
-        </label>
-        <h2>주문한 상품</h2>
-        <ul>
+        </div>
+        <h2 className="font-semibold text-lg">주문한 상품</h2>
+        <ul className="space-y-4">
           {omlist.map((item) => (
-            <li key={item.menuId}>
+            <li key={item.menuId} className="flex justify-between items-center">
               <span>{item.name}</span>
+              <div className="flex items-center space-x-2">
               <button
-                type="button"
-                onClick={() => handleQuantityChange(item.menuId, -1)}
+              type="button"
+              className="bg-red-500 px-3 py-1 rounded text-white hover:bg-red-600"
+              onClick={() => handleQuantityChange(item.menuId, -1)}
               >
-                -
+                  -
               </button>
-              <span>{item.quantity}</span>
-              <button
-                type="button"
-                onClick={() => handleQuantityChange(item.menuId, 1)}
-              >
-                +
-              </button>
+                      <span>{item.quantity}</span>
+                <button
+          type="button"
+          className="bg-blue-500 px-3 py-1 rounded text-white hover:bg-blue-600"
+          onClick={() => handleQuantityChange(item.menuId, 1)}
+        >
+                  +
+                </button>
+              </div>
             </li>
           ))}
         </ul>
-        <button type="button" onClick={handleSubmit}>
+        <div className="flex justify-start gap-2 mt-6">
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 mr-1"
+        >
           주문 수정
         </button>
+        <button
+        type="button"
+        onClick={() => navigate(`/order/detail/${id}`, { state: { email } })}
+        className="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600"
+      >
+        돌아가기
+      </button>
+      </div>
       </form>
     </div>
   );
