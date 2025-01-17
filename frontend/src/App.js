@@ -1,24 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import OrderPage from './screens/OrderScreen';
+import EmailInput from './screens/EmailInput';
+import OrderList from './screens/OrderList';
+import OrderDetail from './screens/OrderDetail';
+import OrderModify from './screens/OrderModify';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/order" element={<OrderPage />} />
+        <Route path="/order/email" element={<EmailInput />} />
+        <Route path="/order/list" element={<OrderList />} />
+        <Route path="/order/detail/:id" element={<OrderDetail />} />
+        <Route path="/order/modify/:id" element={<OrderModify />} />
+      </Routes>
+    </Router>
   );
 }
 
