@@ -53,3 +53,12 @@ export const addMenu = async (menuData,image) => {
     throw new Error("메뉴 추가에 실패했습니다.");
   }
 };
+
+// 주문 조회
+export const orderList = (email) => api.get(`/admin/order/${email}`);
+
+// 주문 상세 조회
+export const orderDetail = (email, id) => api.get(`/admin/order/${email}/${id}`);
+
+// 주문 취소
+export const cancelOrder = (email, id) => api.delete(`/admin/order/${email}/${id}`);
