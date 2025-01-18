@@ -13,24 +13,24 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "/perform_login",
-        new URLSearchParams({
-          username,
-          password,
-        }),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+          "/perform_login", // 변경: Spring Security에서 설정한 로그인 처리 URL
+          new URLSearchParams({
+              username,
+              password,
+          }),
+          {
+              headers: {
+                  "Content-Type": "application/x-www-form-urlencoded",
+              },
           }
-        }
       );
 
       console.log("Login successful:", response.data);
-      window.location.href = "/admin/order";
-    } catch (err) {
+      window.location.href = "/admin/order"; // 로그인 성공 시 이동할 경로
+  } catch (err) {
       console.error("Login failed:", err);
       setError("Invalid username or password");
-    }
+  }
   };
 
   return (

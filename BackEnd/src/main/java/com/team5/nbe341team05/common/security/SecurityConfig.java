@@ -41,6 +41,7 @@ public class SecurityConfig {
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
                 .formLogin(login -> login
                         .loginPage("/login") // 로그인 페이지 설정
+                        .loginProcessingUrl("/perform_login")
                         .defaultSuccessUrl("/admin/order", true) // 로그인 성공 후 리다이렉트
                         .permitAll()
                 )
