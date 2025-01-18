@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { CiImageOn } from "react-icons/ci";
 import { uploadImage, addMenu } from "../DL/api";
 
 const AddMenu = () => {
@@ -30,6 +29,9 @@ const AddMenu = () => {
         try {
             // 1. 이미지 업로드
             const imageUrl = await uploadImage(file);
+            if (!imageUrl) {
+                throw new Error("이미지 URL이 반환되지 않았습니다.");
+              }
 
             // 2. 메뉴 데이터와 업로드된 이미지 URL 통합
             const finalMenuData = { ...menuData, image: imageUrl };
@@ -134,30 +136,17 @@ const AddMenu = () => {
                         </div>
                         <div className="w-1/2">
                             <label className="block text-sm font-medium text-gray-700">
-                                중량
+                                수량
                             </label>
                             <input
                                 type="number"
-                                name="weight"
-                                value={menuData.weight}
+                                name="quantity"
+                                value={menuData.quantity}
                                 onChange={inputMenu}
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                placeholder="중량 입력"
+                                placeholder="수량 입력"
                             />
                         </div>
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700">
-                            수량
-                        </label>
-                        <input
-                            type="number"
-                            name="quantity"
-                            value={menuData.quantity}
-                            onChange={inputMenu}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            placeholder="수량 입력"
-                        />
                     </div>
                     <div className="flex justify-end space-x-4">
                         <button

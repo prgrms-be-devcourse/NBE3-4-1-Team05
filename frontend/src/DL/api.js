@@ -21,7 +21,7 @@ export const uploadImage = async (image) => {
     const formData = new FormData();
     formData.append("image", image);
 
-    const response = await axios.post(`/admin/menus`, formData, {
+    const response = await api.post(`${API_BASE_URL}/admin/menus`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -35,13 +35,18 @@ export const uploadImage = async (image) => {
   }
 };
 
-export const addMenu = async (menuData) => {
+export const addMenu = async (menuData,image) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/admin/menus`, menuData, {
+    const formData = new FormData();
+    formData.append("menu", JSON.stringify(menuData)); // JSON으로 변환 후 추가
+    formData.append("image", image); 
+
+    const response = await api.post(`${API_BASE_URL}/admin/menus`, formData, {
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/form-data",
       },
     });
+    console.log("메뉴 생성 성공:", response.data);
     return response.data; // 서버 응답 데이터
   } catch (err) {
     console.error("메뉴 추가 실패:", err);
