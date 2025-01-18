@@ -4,8 +4,8 @@ const API_BASE_URL = 'http://localhost:8080'; // 백엔드 API 주소
 
 const api = axios.create({
   baseURL: API_BASE_URL, // baseURL을 사용하여 기본 API 주소 설정
-  headers: {
-    'Content-Type': 'application/json ',
+  headers:{
+    "Content-Type" : "application/json",
   },
   withCredentials: true, // 세션 기반 인증에 필요한 설정 (쿠키 포함)
 });
@@ -55,10 +55,10 @@ export const addMenu = async (menuData,image) => {
 };
 
 // 주문 조회
-export const orderList = (email) => api.get(`/admin/order/${email}`);
+export const orderList = (email) => api.get(`${API_BASE_URL}/admin/order`);
 
 // 주문 상세 조회
-export const orderDetail = (email, id) => api.get(`/admin/order/${email}/${id}`);
+export const orderDetail = (email, id) => api.get(`${API_BASE_URL}/admin/order/${id}`);
 
 // 주문 취소
-export const cancelOrder = (email, id) => api.delete(`/admin/order/${email}/${id}`);
+export const cancelOrder = (email, id) => api.delete(`${API_BASE_URL}/admin/order/${id}`);

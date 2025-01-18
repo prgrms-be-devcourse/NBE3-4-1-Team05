@@ -37,7 +37,7 @@ const AddMenu = () => {
             const finalMenuData = { ...menuData, image: imageUrl };
 
             // 3. 메뉴 데이터 서버 전송
-            await addMenu(finalMenuData);
+            await addMenu(finalMenuData, file);
 
             alert("메뉴가 성공적으로 추가되었습니다!");
         } catch (err) {
