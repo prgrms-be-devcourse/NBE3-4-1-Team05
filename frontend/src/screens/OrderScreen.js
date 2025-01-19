@@ -93,34 +93,6 @@ const OrderPage = () => {
                     주문 페이지
                 </h1>
 
-                {/* 상품 리스트 */}
-                <div className="bg-white rounded-md shadow-md p-4 mb-6">
-                    <h2 className="text-[24px] font-semibold mb-4">상품 리스트</h2>
-                    {[
-                        { id: 1, name: "케냐 에스프레소", price: 5000 },
-                        { id: 2, name: "콜롬비아 드립백", price: 3000 },
-                        { id: 3, name: "에티오피아 원두", price: 7000 },
-                    ].map((product) => (
-                        <div
-                            key={product.id}
-                            className="flex justify-between items-center border-b border-gray-300 py-2"
-                        >
-                            <p>
-                                {product.name} - {product.price}원
-                            </p>
-                            <button
-                                onClick={() =>
-                                    addToCart(product.id, product.name, 1, product.price)
-                                }
-                                className="px-4 py-2 text-white rounded-md hover:opacity-90"
-                                style={{ backgroundColor: "#9EBA99" }}
-                            >
-                                장바구니에 추가
-                            </button>
-                        </div>
-                    ))}
-                </div>
-
                 {/* 장바구니 섹션 */}
                 <div className="bg-white rounded-md shadow-md p-4 mb-6">
                     <h2 className="text-[24px] font-semibold mb-4">장바구니 🛒</h2>
