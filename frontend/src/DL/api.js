@@ -55,10 +55,10 @@ export const addMenu = async (menuData,image) => {
 };
 
 // 주문 조회
-export const orderList = (email) => api.get(`${API_BASE_URL}/admin/order`);
+export const orderList = () => api.get(`${API_BASE_URL}/admin/order`);
 
 // 주문 상세 조회
-export const orderDetail = (email, id) => api.get(`${API_BASE_URL}/admin/order/${id}`);
+export const orderDetail = (id) => api.get(`${API_BASE_URL}/admin/order/${id}`);
 
 // 주문 취소
-export const cancelOrder = (email, id) => api.delete(`${API_BASE_URL}/admin/order/${id}`);
+export const cancelOrder = (id) => api.delete(`${API_BASE_URL}/admin/order/${id}`);
