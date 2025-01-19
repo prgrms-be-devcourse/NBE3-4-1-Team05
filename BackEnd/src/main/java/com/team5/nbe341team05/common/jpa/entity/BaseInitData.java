@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+
 @Configuration
 @RequiredArgsConstructor
 public class BaseInitData {
@@ -31,19 +33,17 @@ public class BaseInitData {
     }
 
     @Transactional
-    public void makeSampleMenus(){
-        if(menuService.count() > 0) return;
+    public void makeSampleMenus() throws IOException {
+        if (menuService.count() > 0) return;
 
-        for(int i = 1; i <= 20; i++){
+        for (int i = 1; i <= 20; i++) {
             MenuRequestDto menuRequestDto = MenuRequestDto.builder()
                     .productName("Menu" + i)
                     .description("Menu description" + i)
                     .price(1000 * i)
                     .stock(10)
-                    .image("img_src")
                     .build();
-
-            menuService.create(menuRequestDto);
+            menuService.create(menuRequestDto, null);
         }
 
 //        String[] menuTypes = {"커피", "주스", "스무디", "티", "에이드"};

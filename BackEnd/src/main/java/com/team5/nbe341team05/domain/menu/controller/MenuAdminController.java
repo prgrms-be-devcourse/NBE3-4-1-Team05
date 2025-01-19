@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/admin/menus")
@@ -45,17 +48,24 @@ public class MenuAdminController {
     }
 
     @Transactional
-    @PostMapping("/")
-    public ResponseMessage<Menu> createMenu(@RequestBody MenuRequestDto menuRequestDto) {
-        Menu menu = this.menuService.create(menuRequestDto);
-
-        return new ResponseMessage<>("상품이 성공적으로 생성되었습니다.", String.valueOf(HttpStatus.OK.value()), menu);
+    @PostMapping
+    public ResponseMessage<MenuResponseDto> createMenu(@RequestPart("menu") MenuRequestDto menuRequestDto
+                                                       , @RequestPart("image")MultipartFile image
+                                                       ) {
+        try {
+            Menu menu = this.menuService.create(menuRequestDto, image);
+            return new ResponseMessage<>("상품이 성공적으로 생성되었습니다.", String.valueOf(HttpStatus.CREATED.value()),
+                    new MenuResponseDto(menu));
+        } catch (Exception e) {
+            return new ResponseMessage<>("상품 생성 실패: " + e.getMessage(),
+                    String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()), null);
+        }
     }
 
     @Transactional
     @PostMapping("/{id}")
-    public ResponseMessage<Menu> updateMenu(@PathVariable("id") Long id, @RequestBody MenuRequestDto menuRequestDto) {
-        Menu menu = this.menuService.updateMenu(id, menuRequestDto);
+    public ResponseMessage<Menu> updateMenu(@PathVariable("id") Long id, @RequestBody MenuRequestDto menuRequestDto, MultipartFile image) throws IOException {
+        Menu menu = this.menuService.updateMenu(id, menuRequestDto,image);
 
         return new ResponseMessage<>("상품이 성공적으로 수정되었습니다.", String.valueOf(HttpStatus.OK.value()), menu);
 
