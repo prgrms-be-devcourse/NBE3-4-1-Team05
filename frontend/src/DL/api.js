@@ -11,32 +11,30 @@ const api = axios.create({
 });
 
 // 메뉴 전체 조회
-// export const getAllMenu = () => api.get(`/menus`);
-export const getAllMenu = (page = 0) => {
-    return api.get(`/menus?page=${page}`);
+// DL/api.js
+export const getAllMenu = (page = 0, sort = 'recent') => {
+    let sortParam;
+    switch(sort) {
+        case 'viewsDesc':
+            sortParam = 'VIEWS_DESC';
+            break;
+        case 'recent':
+            sortParam = 'RECENT';
+            break;
+        case 'oldest':
+            sortParam = 'OLDEST';
+            break;
+        case 'priceDesc':
+            sortParam = 'PRICE_DESC';
+            break;
+        case 'priceAsc':
+            sortParam = 'PRICE_ASC';
+            break;
+        default:
+            sortParam = 'RECENT';
+    }
+    return api.get(`/menus?page=${page}&sortType=${sortParam}`);
 };
 
 // 특정 메뉴 조회
 export const getMenu = (id) => api.get(`/menus/${id}`);
-
-// // 메뉴 전체 목록 조회
-// export const getMenuList = async () => {
-//     try {
-//         const response = await api.get('/menus');
-//         return response.data;
-//     } catch (error) {
-//         console.error('메뉴 목록 조회 실패:', error.response?.data || error.message);
-//         throw error;
-//     }
-// };
-//
-// // 특정 메뉴 상세 조회
-// export const getMenuDetail = async (id) => {
-//     try {
-//         const response = await api.get(`/menus/${id}`);
-//         return response.data;
-//     } catch (error) {
-//         console.error('메뉴 상세 조회 실패:', error.response?.data || error.message);
-//         throw error;
-//     }
-// };

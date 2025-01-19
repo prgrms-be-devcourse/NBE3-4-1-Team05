@@ -12,13 +12,22 @@ const ProductList = () => {
     const [hasMore, setHasMore] = useState(true);
     const observer = useRef();
     const lastProductRef = useRef();
+    const [sortOption, setSortOption] = useState('recent');
+
+    // 정렬 옵션 변경 핸들러
+    const handleSortChange = (e) => {
+        setSortOption(e.target.value);
+        setPage(0);
+        setProducts([]);
+        setLoading(true); // 로딩 상태 추가
+    };
 
     const fetchProducts = async () => {
         try {
-            const response = await getAllMenu(page);
+            const response = await getAllMenu(page, sortOption); // API 호출 시 정렬 옵션 전달
             const newProducts = response.data.data.content;
 
-            setProducts(prev => [...prev, ...newProducts]);
+            setProducts(prev => page === 0 ? newProducts : [...prev, ...newProducts]);
             setHasMore(!response.data.data.last);
             setLoading(false);
         } catch (error) {
@@ -50,11 +59,9 @@ const ProductList = () => {
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
-            fetchProducts();
-        } else if (page > 0) {  // 첫 페이지가 아닐 때만 추가 데이터 로드
-            fetchProducts();
         }
-    }, [page]);
+        fetchProducts();
+    }, [page, sortOption]);
 
     const handleProductClick = (product) => {
         setSelectedProduct(product);
@@ -79,6 +86,21 @@ const ProductList = () => {
 
             {/* Main Content */}
             <div className="flex-1 p-8">
+                {/* 정렬 드롭다운 */}
+                <div className="flex justify-end mb-6">
+                    <select
+                        value={sortOption}
+                        onChange={handleSortChange}
+                        className="px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="viewsDesc">조회순</option>
+                        <option value="recent">최근등록순</option>
+                        <option value="oldest">나중등록순</option>
+                        <option value="priceDesc">가격높은순</option>
+                        <option value="priceAsc">가격낮은순</option>
+                    </select>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
                     {products.map((product, index) => (
                         <div
