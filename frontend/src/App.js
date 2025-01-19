@@ -6,7 +6,6 @@ import OrderList from './screens/OrderList';
 import OrderDetail from './screens/OrderDetail';
 import OrderModify from './screens/OrderModify';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/login";
 import AddMenuPage from "./screens/addMenu";
 import AdminOrderDetail from "./screens/AdminOrderDetail";
@@ -26,8 +25,8 @@ function App() {
         {/* 기본 경로 설정 */}
         <Route path="/" element={<h1>Welcome to the Home Page</h1>} />
         <Route path="/admin/addMenu" element={<AddMenuPage/>}/>
-        <Route path="/admin/order/id" element={<AdminOrderDetail />} />
-        <Route path="/admin/order" element={<AdminOrderList />} />
+        <Route path="/admin/order/:id" element={<AdminOrderDetail />} />
+        <Route path="/admin/orders" element={<AdminOrderList />} />
       </Routes>
     </Router>
   );

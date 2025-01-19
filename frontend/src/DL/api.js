@@ -10,6 +10,20 @@ const api = axios.create({
   withCredentials: true, // 세션 기반 인증에 필요한 설정 (쿠키 포함)
 });
 
+// 요청 인터셉터 - 토큰 추가
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 export const uploadImage = async (image) => {
   if (!image) {
     alert("이미지를 선택하세요.");
@@ -21,7 +35,7 @@ export const uploadImage = async (image) => {
     const formData = new FormData();
     formData.append("image", image);
 
-    const response = await api.post(`${API_BASE_URL}/admin/menus`, formData, {
+    const response = await api.post(`/admin/menus`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -41,7 +55,7 @@ export const addMenu = async (menuData,image) => {
     formData.append("menu", JSON.stringify(menuData)); // JSON으로 변환 후 추가
     formData.append("image", image); 
 
-    const response = await api.post(`${API_BASE_URL}/admin/menus`, formData, {
+    const response = await api.post(`/admin/menus`, formData, {
       headers: {
         "Content-Type": "application/form-data",
       },
@@ -54,20 +68,16 @@ export const addMenu = async (menuData,image) => {
   }
 };
 
-// 주문 조회
-export const AdminOrderList = () => api.get(`${API_BASE_URL}/admin/order`);
-
-// 주문 상세 조회
-export const AdminOrderDetail = (id) => api.get(`${API_BASE_URL}/admin/order/${id}`);
-
-// 주문 취소
-export const AdminCancelOrder = (id) => api.delete(`${API_BASE_URL}/admin/order/${id}`);import axios from 'axios';
-
+export const adminApi = {
+  getAllOrders: () => api.get(`${API_BASE_URL}/admin/order`),
+  getOrderById: (id) => api.get(`${API_BASE_URL}/admin/order/${id}`),
+  cancelOrder: (id) => api.delete(`${API_BASE_URL}/admin/order/${id}`)
+};
 
 // 주문 생성
 export const createOrder = async (orderData) => {
     try {
-      const response = await api.post('/order', orderData);
+      const response = await api.post(`/order`, orderData);
       return response.data; // 성공적으로 받은 데이터 반환
     } catch (error) {
       // 오류 처리
@@ -87,3 +97,7 @@ export const modifyOrder = (email, id, data) => api.put(`/order/${email}/${id}`,
 
 // 주문 취소
 export const cancelOrder = (email, id) => api.delete(`/order/${email}/${id}`);
+
+export const getMenu = () => api.get(`/menus`);
+
+export default api;

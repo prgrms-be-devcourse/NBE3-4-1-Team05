@@ -1,11 +1,25 @@
-import React, { useState } from "react";
-import { createOrder } from "../DL/api";
+import React, { useState, useEffect } from "react";
+import { createOrder, getMenu } from "../DL/api";
 
 const OrderPage = () => {
     const [menus, setMenus] = useState([]);
     const [email, setEmail] = useState("");
     const [address, setAddress] = useState("");
     const [orderMessage, setOrderMessage] = useState("");
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        const loadProducts = async () => {
+            try {
+                const data = await getMenu();
+                setProducts(data); // API로 받은 데이터를 상태에 저장
+            } catch (error) {
+                console.error("상품 리스트를 불러오는 중 오류 발생:", error);
+            }
+        };
+
+        loadProducts();
+    }, []);
 
     const addToCart = (menuId, menuName, quantity, price) => {
         setMenus((prevMenus) => {
@@ -64,6 +78,7 @@ const OrderPage = () => {
             const response = await createOrder(orderData);
             alert(`주문이 완료되었습니다! 총 결제 금액: ${calculateTotalPrice()}원`);
             resetOrderPage();
+            return response.data;
         } catch (error) {
             console.error("주문 실패 이유:", error.message);
             alert("주문에 실패했습니다. 다시 시도해주세요.");
@@ -183,7 +198,7 @@ const OrderPage = () => {
                         <button
                             onClick={placeOrder}
                             className="px-4 py-2 text-white rounded-md hover:opacity-90"
-                            style={{backgroundColor: "#9EBA99"}}
+                            style={{ backgroundColor: "#9EBA99" }}
                         >
                             주문하기
                         </button>

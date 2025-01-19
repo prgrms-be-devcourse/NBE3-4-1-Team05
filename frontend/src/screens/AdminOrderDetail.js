@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { orderDetail, cancelOrder } from "../DL/api"; // 주문 상세 API 호출 함수
+import { OrderDetailForAdmin, cancelOrder } from "../DL/api"; // 주문 상세 API 호출 함수
 
 const AdminOrderDetail = () => {
   const { id } = useParams(); // URL에서 주문 번호(id) 가져오기
@@ -22,7 +22,7 @@ const AdminOrderDetail = () => {
   useEffect(() => {
     const fetchOrderDetail = async () => {
       try {
-        const response = await orderDetail(email, id);
+        const response = await AdminOrderDetail(email, id);
         setOrder(response.data.data);
       } catch (err) {
         setError("주문 데이터를 불러오는 데 실패했습니다.");
