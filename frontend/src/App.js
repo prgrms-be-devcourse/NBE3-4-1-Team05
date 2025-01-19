@@ -25,7 +25,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         {/* 기본 경로 설정 */}
         <Route path="/admin/addMenu" element={<AddMenuPage/>}/>
-        <Route path="/admin/order/:id" element={<AdminOrderDetail />} />
+        <Route path="/admin/order/detail/:id" element={<AdminOrderDetail />} />
         <Route path="/admin/order" element={<AdminOrderList />} />
         <Route path="/" element={<MainMenuScreen />} />
       </Routes>

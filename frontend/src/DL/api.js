@@ -4,24 +4,24 @@ const API_BASE_URL = 'http://localhost:8080'; // 백엔드 API 주소
 
 const api = axios.create({
   baseURL: API_BASE_URL, // baseURL을 사용하여 기본 API 주소 설정
-  headers:{
-    "Content-Type" : "application/json",
+  headers: {
+    "Content-Type": "application/json",
   },
   withCredentials: true, // 세션 기반 인증에 필요한 설정 (쿠키 포함)
 });
 
 // 요청 인터셉터 - 토큰 추가
 api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
 // 응답 인터셉터 추가
@@ -55,18 +55,18 @@ export const addMenu = async (menuData, image) => {
     }));
     formData.append("image", image);
 
-    
+
     formData.forEach((value, key) => {
       console.log(`${key}:`, value);
     });
-    
+
     const response = await api.post(`/admin/menus`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
       withCredentials: true,
     });
-    
+
     console.log("메뉴 생성 성공:", response.data);
     return response.data;
   } catch (err) {
@@ -79,22 +79,40 @@ export const addMenu = async (menuData, image) => {
 };
 
 export const adminApi = {
-  getAllOrders: () => api.get(`/admin/order`),
-  getOrderById: (id) => api.get(`/admin/order/${id}`),
-  cancelOrder: (id) => api.delete(`/admin/order/${id}`)
+  getAllOrders: async () => {
+    try {
+        // API 경로 수정
+        const response = await api.get('/admin/order');  // 또는 실제 백엔드 경로에 맞게 수정
+        return response;
+    } catch (error) {
+        console.error('getAllOrders Error:', error);
+        throw error;
+    }
+},
+getOrderDetail: async (orderId) => {
+    try {
+        // API 경로 수정
+        const response = await api.get(`/admin/order/${orderId}`);  // 또는 실제 백엔드 경로에 맞게 수정
+        return response;
+    } catch (error) {
+        console.error('getOrderDetail Error:', error);
+        throw error;
+    }
+},
+  cancelOrder: (orderId) => api.delete(`/admin/order/${orderId}`)
 };
 
 // 주문 생성
 export const createOrder = async (orderData) => {
-    try {
-      const response = await api.post(`/order`, orderData);
-      return response.data; // 성공적으로 받은 데이터 반환
-    } catch (error) {
-      // 오류 처리
-      console.error('주문 생성 실패:', error.response?.data || error.message);
-      throw error; // 오류를 호출한 쪽으로 다시 던짐
-    }
-  };
+  try {
+    const response = await api.post(`/order`, orderData);
+    return response.data; // 성공적으로 받은 데이터 반환
+  } catch (error) {
+    // 오류 처리
+    console.error('주문 생성 실패:', error.response?.data || error.message);
+    throw error; // 오류를 호출한 쪽으로 다시 던짐
+  }
+};
 
 // 주문 조회
 export const orderList = (email) => api.get(`/order/${email}`);
@@ -113,7 +131,7 @@ export const cancelOrder = (email, id) => api.delete(`/order/${email}/${id}`);
 // 메뉴 전체 조회
 // export const getAllMenu = () => api.get(`/menus`);
 export const getAllMenu = (page = 0) => {
-    return api.get(`/menus?page=${page}`);
+  return api.get(`/menus?page=${page}`);
 };
 
 // 특정 메뉴 조회

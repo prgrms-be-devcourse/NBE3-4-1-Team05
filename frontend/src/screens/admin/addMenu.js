@@ -11,6 +11,7 @@ const AddMenu = () => {
         price: "",
         stock: "",
     });
+    
 
     // 파일 선택 처리
     const inputImage = (e) => {
