@@ -55,10 +55,35 @@ export const addMenu = async (menuData,image) => {
 };
 
 // 주문 조회
-export const orderList = () => api.get(`${API_BASE_URL}/admin/order`);
+export const AdminOrderList = () => api.get(`${API_BASE_URL}/admin/order`);
 
 // 주문 상세 조회
-export const orderDetail = (id) => api.get(`${API_BASE_URL}/admin/order/${id}`);
+export const AdminOrderDetail = (id) => api.get(`${API_BASE_URL}/admin/order/${id}`);
 
 // 주문 취소
-export const cancelOrder = (id) => api.delete(`${API_BASE_URL}/admin/order/${id}`);
+export const AdminCancelOrder = (id) => api.delete(`${API_BASE_URL}/admin/order/${id}`);import axios from 'axios';
+
+
+// 주문 생성
+export const createOrder = async (orderData) => {
+    try {
+      const response = await api.post('/order', orderData);
+      return response.data; // 성공적으로 받은 데이터 반환
+    } catch (error) {
+      // 오류 처리
+      console.error('주문 생성 실패:', error.response?.data || error.message);
+      throw error; // 오류를 호출한 쪽으로 다시 던짐
+    }
+  };
+
+// 주문 조회
+export const orderList = (email) => api.get(`/order/${email}`);
+
+// 주문 상세 조회
+export const orderDetail = (email, id) => api.get(`/order/${email}/${id}`);
+
+// 주문 수정
+export const modifyOrder = (email, id, data) => api.put(`/order/${email}/${id}`, data);
+
+// 주문 취소
+export const cancelOrder = (email, id) => api.delete(`/order/${email}/${id}`);
