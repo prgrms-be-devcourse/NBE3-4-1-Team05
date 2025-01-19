@@ -14,7 +14,7 @@ const Navbar = () => {
             <div>
                 <ul className="flex list-none m-0 p-0">
                     <li className="ml-8 relative">
-                        <Link to="/order" className="text-white no-underline">
+                        <Link to="/order/email" className="text-white no-underline">
                             주문 조회
                         </Link>
                     </li>
@@ -28,7 +28,7 @@ const Navbar = () => {
                         onMouseEnter={() => setShowDropdown(true)}
                         onMouseLeave={() => setShowDropdown(false)}
                     >
-                        <Link to="/admin" className="text-white no-underline">
+                        <Link to="/login" className="text-white no-underline">
                             관리자 페이지
                         </Link>
                         {showDropdown && (
@@ -39,7 +39,7 @@ const Navbar = () => {
                                     </Link>
                                 </li>
                                 <li className="m-0 p-2 hover:bg-[#444]">
-                                    <Link to="/admin/products" className="text-white no-underline block">
+                                    <Link to="/admin/menus" className="text-white no-underline block">
                                         상품 조회
                                     </Link>
                                 </li>

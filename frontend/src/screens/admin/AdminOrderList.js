@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { adminApi } from '../DL/api';
+import { adminApi } from '../../DL/api';
 import { useNavigate } from "react-router-dom";
 
 const AdminOrderList = () => {

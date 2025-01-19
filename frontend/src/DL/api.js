@@ -34,7 +34,9 @@ export const uploadImage = async (image) => {
 
     const formData = new FormData();
     formData.append("image", image);
-
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
     const response = await api.post(`/admin/menus`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -54,7 +56,10 @@ export const addMenu = async (menuData,image) => {
     const formData = new FormData();
     formData.append("menu", JSON.stringify(menuData)); // JSON으로 변환 후 추가
     formData.append("image", image); 
-
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
+    
     const response = await api.post(`/admin/menus`, formData, {
       headers: {
         "Content-Type": "application/form-data",

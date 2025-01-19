@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { uploadImage, addMenu } from "../DL/api";
+import { uploadImage, addMenu } from "../../DL/api";
 
 const AddMenu = () => {
     const [file, setFile] = useState(null); // 업로드할 파일
@@ -31,7 +31,7 @@ const AddMenu = () => {
             const imageUrl = await uploadImage(file);
             if (!imageUrl) {
                 throw new Error("이미지 URL이 반환되지 않았습니다.");
-              }
+            }
 
             // 2. 메뉴 데이터와 업로드된 이미지 URL 통합
             const finalMenuData = { ...menuData, image: imageUrl };
