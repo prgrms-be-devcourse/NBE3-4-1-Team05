@@ -1,10 +1,28 @@
-// ProductList.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
 import ProductDetailPopup from './ProductDetailPopup';
+import { getAllMenu } from '../DL/api';
 
 const ProductList = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    const fetchProducts = async () => {
+        try {
+            const response = await getAllMenu();
+            setProducts(response.data.data.content); // content 배열로 수정
+            setLoading(false);
+        } catch (error) {
+            setError('메뉴를 불러오는데 실패했습니다.');
+            setLoading(false);
+        }
+    };
 
     const handleProductClick = (product) => {
         setSelectedProduct(product);
@@ -14,36 +32,8 @@ const ProductList = () => {
         setSelectedProduct(null);
     };
 
-    const products = [
-        {
-            id: 1,
-            image: require('../assets/images/menus/menu1.jpg'),
-            title: 'Pena Espresso',
-            price: 4500,
-            description: '메뉴1에 대한 상세 설명...'
-        },
-        {
-            id: 2,
-            image: require('../assets/images/menus/menu2.jpg'),
-            title: 'Transparent Coffee',
-            price: 5000,
-            description: '메뉴2에 대한 상세 설명...'
-        },
-        {
-            id: 3,
-            image: require('../assets/images/menus/menu3.jpg'),
-            title: 'Nicaragua Espresso',
-            price: 4000,
-            description: '메뉴3에 대한 상세 설명...'
-        },
-        {
-            id: 4,
-            image: require('../assets/images/menus/menu4.jpg'),
-            title: 'Coldcut Coffee',
-            price: 5500,
-            description: '메뉴4에 대한 상세 설명...'
-        }
-    ];
+    if (loading) return <div className="flex justify-center items-center min-h-screen">로딩중...</div>;
+    if (error) return <div className="flex justify-center items-center min-h-screen">{error}</div>;
 
     return (
         <div className="flex min-h-[calc(100vh-60px)] mt-[60px]">
@@ -68,7 +58,7 @@ const ProductList = () => {
                             <div className="h-full">
                                 <ProductCard
                                     image={product.image}
-                                    title={product.title}
+                                    title={product.productName} // productName으로 수정
                                     price={product.price}
                                 />
                             </div>
