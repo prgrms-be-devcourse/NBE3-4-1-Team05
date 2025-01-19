@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ProductCard from './ProductCard';
 import ProductDetailPopup from './ProductDetailPopup';
 import { getAllMenu } from '../DL/api';
@@ -8,21 +8,53 @@ const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const observer = useRef();
+    const lastProductRef = useRef();
 
     const fetchProducts = async () => {
         try {
-            const response = await getAllMenu();
-            setProducts(response.data.data.content); // content 배열로 수정
+            const response = await getAllMenu(page);
+            const newProducts = response.data.data.content;
+
+            setProducts(prev => [...prev, ...newProducts]);
+            setHasMore(!response.data.data.last);
             setLoading(false);
         } catch (error) {
             setError('메뉴를 불러오는데 실패했습니다.');
             setLoading(false);
         }
     };
+
+    const lastProductCallback = useCallback(node => {
+        if (loading) return;
+
+        if (observer.current) {
+            observer.current.disconnect();
+        }
+
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+
+        if (node) {
+            observer.current.observe(node);
+        }
+    }, [loading, hasMore]);
+
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            fetchProducts();
+        } else if (page > 0) {  // 첫 페이지가 아닐 때만 추가 데이터 로드
+            fetchProducts();
+        }
+    }, [page]);
 
     const handleProductClick = (product) => {
         setSelectedProduct(product);
@@ -32,7 +64,6 @@ const ProductList = () => {
         setSelectedProduct(null);
     };
 
-    if (loading) return <div className="flex justify-center items-center min-h-screen">로딩중...</div>;
     if (error) return <div className="flex justify-center items-center min-h-screen">{error}</div>;
 
     return (
@@ -49,22 +80,24 @@ const ProductList = () => {
             {/* Main Content */}
             <div className="flex-1 p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
-                    {products.map(product => (
+                    {products.map((product, index) => (
                         <div
                             key={product.id}
+                            ref={index === products.length - 1 ? lastProductCallback : null}
                             onClick={() => handleProductClick(product)}
                             className="aspect-[3/4] w-full min-w-[250px]"
                         >
                             <div className="h-full">
                                 <ProductCard
                                     image={product.image}
-                                    title={product.productName} // productName으로 수정
+                                    title={product.productName}
                                     price={product.price}
                                 />
                             </div>
                         </div>
                     ))}
                 </div>
+                {loading && <div className="flex justify-center items-center py-4">로딩중...</div>}
             </div>
 
             {/* Popup */}
