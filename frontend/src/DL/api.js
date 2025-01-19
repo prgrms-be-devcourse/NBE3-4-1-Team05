@@ -98,6 +98,13 @@ export const modifyOrder = (email, id, data) => api.put(`/order/${email}/${id}`,
 // 주문 취소
 export const cancelOrder = (email, id) => api.delete(`/order/${email}/${id}`);
 
-export const getMenu = () => api.get(`/menus`);
 
-export default api;
+
+// 메뉴 전체 조회
+// export const getAllMenu = () => api.get(`/menus`);
+export const getAllMenu = (page = 0) => {
+    return api.get(`/menus?page=${page}`);
+};
+
+// 특정 메뉴 조회
+export const getMenu = (id) => api.get(`/menus/${id}`);

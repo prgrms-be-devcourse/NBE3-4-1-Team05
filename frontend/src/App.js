@@ -5,6 +5,8 @@ import EmailInput from './screens/EmailInput';
 import OrderList from './screens/OrderList';
 import OrderDetail from './screens/OrderDetail';
 import OrderModify from './screens/OrderModify';
+import MainMenuScreen from './screens/MainMenuScreen';
+import OrderListScreen from "./screens/OrderListScreen";
 import './App.css';
 import LoginPage from "./components/login";
 import AddMenuPage from "./screens/addMenu";
@@ -27,6 +29,8 @@ function App() {
         <Route path="/admin/addMenu" element={<AddMenuPage/>}/>
         <Route path="/admin/order/:id" element={<AdminOrderDetail />} />
         <Route path="/admin/orders" element={<AdminOrderList />} />
+        <Route path="/" element={<MainMenuScreen />} />
+        <Route path="/order_list" element={<OrderListScreen />} />
       </Routes>
     </Router>
   );
