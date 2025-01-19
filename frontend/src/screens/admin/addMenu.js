@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { uploadImage, addMenu } from "../../DL/api";
+import { addMenu } from "../../DL/api";
+import { useNavigate } from "react-router-dom";
 
 const AddMenu = () => {
+    const navigate = useNavigate();
     const [file, setFile] = useState(null); // 업로드할 파일
     const [menuData, setMenuData] = useState({
         name: "",
         description: "",
         price: "",
-        weight: "",
-        quantity: "",
+        stock: "",
     });
 
     // 파일 선택 처리
@@ -25,23 +26,30 @@ const AddMenu = () => {
     // 메뉴 추가 처리
     const submitMenu = async (e) => {
         e.preventDefault();
-
+    
         try {
-            // 1. 이미지 업로드
-            const imageUrl = await uploadImage(file);
-            if (!imageUrl) {
-                throw new Error("이미지 URL이 반환되지 않았습니다.");
+            if (!file) {
+                throw new Error("이미지를 선택해주세요.");
             }
-
-            // 2. 메뉴 데이터와 업로드된 이미지 URL 통합
-            const finalMenuData = { ...menuData, image: imageUrl };
-
-            // 3. 메뉴 데이터 서버 전송
-            await addMenu(finalMenuData, file);
-
+            if (!menuData.name || !menuData.price || !menuData.stock) {
+                throw new Error("필수 항목을 모두 입력해주세요.");
+            }
+    
+            // 메뉴 데이터와 이미지를 함께 전송
+            const menuRequestData = {
+                productName: menuData.name,
+                description: menuData.description,
+                price: menuData.price,
+                stock: menuData.stock
+            };
+            
+            await addMenu(menuRequestData, file);
+            console.log(file);
+        
             alert("메뉴가 성공적으로 추가되었습니다!");
+            navigate("/admin/menus");
         } catch (err) {
-            alert(err.message); // 에러 메시지 표시
+            alert(err.message);
         }
     };
     return (
@@ -140,8 +148,8 @@ const AddMenu = () => {
                             </label>
                             <input
                                 type="number"
-                                name="quantity"
-                                value={menuData.quantity}
+                                name="stock"
+                                value={menuData.stock}
                                 onChange={inputMenu}
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 placeholder="수량 입력"
@@ -158,7 +166,7 @@ const AddMenu = () => {
                         <button
                             type="button"
                             className="bg-gray-300 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-400 transition"
-                            onClick={() => alert("취소 기능")}
+                            onClick={() => navigate("/admin/menus")}
                         >
                             취소
                         </button>

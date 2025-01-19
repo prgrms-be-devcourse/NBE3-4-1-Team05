@@ -47,7 +47,6 @@ public class MenuAdminController {
         );
     }
 
-    @Transactional
     @PostMapping
     public ResponseMessage<MenuResponseDto> createMenu(@RequestPart("menu") MenuRequestDto menuRequestDto
                                                        , @RequestPart("image")MultipartFile image

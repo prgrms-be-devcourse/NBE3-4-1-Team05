@@ -21,11 +21,11 @@ const AdminOrderList = () => {
 
   const fetchOrders = async () => {
     try {
-
       const response = await adminApi.getAllOrders();
-      setOrders(response.data.content);
+      setOrders(response.data?.content || []);
     } catch (err) {
       console.error('Error fetching orders:', err);
+      setOrders([]);
     }
   };
   console.log('orders:', orders);
@@ -46,7 +46,7 @@ const AdminOrderList = () => {
       <h1 className="text-3xl font-bold mb-6 border-b-2 pb-4 text-gray-800">
         전체 주문 내역
       </h1>
-      {orders.length > 0 ? (
+      {Array.isArray(orders) && orders.length > 0 ?(
         <table className="table-auto w-full border-collapse border border-gray-300 bg-white rounded-lg shadow-md">
           <thead className="bg-gray-200">
             <tr>

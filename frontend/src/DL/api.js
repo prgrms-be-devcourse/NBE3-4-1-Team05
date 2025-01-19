@@ -24,59 +24,64 @@ api.interceptors.request.use(
     }
 );
 
-export const uploadImage = async (image) => {
-  if (!image) {
-    alert("이미지를 선택하세요.");
-    return;
+// 응답 인터셉터 추가
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.error('API 에러:', error.response);
+    if (error.response?.status === 302) {
+      // 로그인 페이지로 리다이렉트
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
   }
+);
 
+export const addMenu = async (menuData, image) => {
   try {
-
     const formData = new FormData();
+
+    const menuRequestDto = {
+      productName: menuData.productName,
+      description: menuData.description,
+      price: Number(menuData.price),
+      stock: Number(menuData.stock)
+    };
+
+    formData.append("menu", new Blob([JSON.stringify(menuRequestDto)], {
+      type: 'application/json'
+    }));
     formData.append("image", image);
-    formData.forEach((value, key) => {
-      console.log(`${key}:`, value);
-    });
-    const response = await api.post(`/admin/menus`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
 
-    alert("이미지 업로드 성공.");
-    return response.data; // 서버에서 반환된 이미지 URL
-  } catch (err) {
-    console.error("이미지 업로드 실패:", err);
-    throw new Error("이미지 업로드에 실패했습니다.");
-  }
-};
-
-export const addMenu = async (menuData,image) => {
-  try {
-    const formData = new FormData();
-    formData.append("menu", JSON.stringify(menuData)); // JSON으로 변환 후 추가
-    formData.append("image", image); 
+    
     formData.forEach((value, key) => {
       console.log(`${key}:`, value);
     });
     
     const response = await api.post(`/admin/menus`, formData, {
       headers: {
-        "Content-Type": "application/form-data",
+        "Content-Type": "multipart/form-data",
       },
+      withCredentials: true,
     });
+    
     console.log("메뉴 생성 성공:", response.data);
-    return response.data; // 서버 응답 데이터
+    return response.data;
   } catch (err) {
-    console.error("메뉴 추가 실패:", err);
-    throw new Error("메뉴 추가에 실패했습니다.");
+    if (err.response?.status === 302) {
+      window.location.href = '/login';
+      throw new Error('로그인이 필요합니다.');
+    }
+    throw new Error(err.response?.data?.message || "메뉴 추가에 실패했습니다.");
   }
 };
 
 export const adminApi = {
-  getAllOrders: () => api.get(`${API_BASE_URL}/admin/order`),
-  getOrderById: (id) => api.get(`${API_BASE_URL}/admin/order/${id}`),
-  cancelOrder: (id) => api.delete(`${API_BASE_URL}/admin/order/${id}`)
+  getAllOrders: () => api.get(`/admin/order`),
+  getOrderById: (id) => api.get(`/admin/order/${id}`),
+  cancelOrder: (id) => api.delete(`/admin/order/${id}`)
 };
 
 // 주문 생성

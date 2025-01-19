@@ -111,7 +111,7 @@ public class MenuService {
             return null; // 이미지가 없을 경우 null 처리
         }
 
-        String uploadDir = uploadDirPath;
+        String uploadDir = Paths.get(uploadDirPath).toAbsolutePath().toString();;
         File directory = new File(uploadDir);
         if (!directory.exists()) {
             directory.mkdirs(); // 디렉토리 없으면 생성
@@ -124,6 +124,6 @@ public class MenuService {
         Path filePath = Paths.get(uploadDir, savedFilename);
         imageFile.transferTo(filePath.toFile());
 
-        return filePath.toString();
+        return savedFilename;
     }
 }
