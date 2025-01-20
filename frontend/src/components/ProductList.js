@@ -76,15 +76,6 @@ const ProductList = () => {
 
     return (
         <div className="flex min-h-[calc(100vh-60px)] mt-[60px]">
-            {/* Sidebar */}
-            <div className="w-[250px] fixed left-0 top-[60px] h-[calc(100vh-60px)] bg-white border-r border-[#e0e0e0] p-5">
-                <ul className="list-none p-0 m-0">
-                    <li className="py-2.5 cursor-pointer text-base text-[#333] hover:text-[#666]">All Products</li>
-                    <li className="py-2.5 cursor-pointer text-base text-[#333] hover:text-[#666]">Coffee Bean package</li>
-                    <li className="py-2.5 cursor-pointer text-base text-[#333] hover:text-[#666]">Capsule</li>
-                </ul>
-            </div>
-
             {/* Main Content */}
             <div className="flex-1 p-8">
                 {/* 정렬 드롭다운 */}
