@@ -7,9 +7,10 @@ const AdminProductCard = ({ image, title, price, id, description, stock, onClick
     const API_BASE_URL = 'http://localhost:8080';
     const navigate = useNavigate();
 
-    const handleCancel = async () => {
+    const handleCancel = async (e) => {
         try {
             if (window.confirm('정말로 삭제하시겠습니까?')) {
+                e.stopPropagation();
                 await adminApi.cancelMenu(id);  // id 전달
                 window.location.reload();  // 페이지 새로고침
             }

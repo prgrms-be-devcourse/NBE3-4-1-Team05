@@ -100,9 +100,11 @@ const AdminProductList = () => {
                         onChange={handleSortChange}
                         className="px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
-                        <option value="recent">최신순</option>
-                        <option value="name">이름순</option>
-                        <option value="price">가격순</option>
+                        <option value="viewsDesc">조회순</option>
+                        <option value="recent">최근등록순</option>
+                        <option value="oldest">나중등록순</option>
+                        <option value="priceDesc">가격높은순</option>
+                        <option value="priceAsc">가격낮은순</option>
                     </select>
                     <button
                         onClick={handleAddMenu}
