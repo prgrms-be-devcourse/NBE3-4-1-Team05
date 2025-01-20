@@ -34,13 +34,13 @@ public class BaseInitData {
     public void makeSampleMenus(){
         if(menuService.count() > 0) return;
 
-        for(int i = 1; i <= 20; i++){
+        for(int i = 1; i <= 35; i++){
             MenuRequestDto menuRequestDto = MenuRequestDto.builder()
                     .productName("Menu" + i)
                     .description("Menu description" + i)
                     .price(1000 * i)
                     .stock(10)
-                    .image("img_src")
+                    .image(String.format("./src/main/resources/static/images/menu%s.jpg", i))
                     .build();
 
             menuService.create(menuRequestDto);

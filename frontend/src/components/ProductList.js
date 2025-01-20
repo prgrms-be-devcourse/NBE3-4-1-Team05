@@ -13,6 +13,7 @@ const ProductList = () => {
     const observer = useRef();
     const lastProductRef = useRef();
     const [sortOption, setSortOption] = useState('recent');
+    const API_BASE_URL = 'http://localhost:8080'; // 백엔드 API 주소
 
     // 정렬 옵션 변경 핸들러
     const handleSortChange = (e) => {
@@ -111,7 +112,7 @@ const ProductList = () => {
                         >
                             <div className="h-full">
                                 <ProductCard
-                                    image={product.image}
+                                    image={`http://localhost:8080/${product.image.split('static/')[1]}`}
                                     title={product.productName}
                                     price={product.price}
                                 />
