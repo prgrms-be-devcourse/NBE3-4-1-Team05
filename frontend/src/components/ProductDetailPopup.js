@@ -14,7 +14,7 @@ const ProductDetailPopup = ({product, onClose}) => {
                 <div className="flex flex-col md:flex-row p-6">
                     <div className="w-full md:w-1/2">
                         <img
-                            src={`http://localhost:8080/${product.image.split('static/')[1]}`}
+                            src={`http://localhost:8080/images/${product.image}`}
                             alt={product.title}
                             className="h-full h-[400px] object-cover rounded-lg"
                         />

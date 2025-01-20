@@ -38,3 +38,15 @@ export const getAllMenu = (page = 0, sort = 'recent') => {
 
 // 특정 메뉴 조회
 export const getMenu = (id) => api.get(`/menus/${id}`);
+
+// 주문 생성
+export const createOrder = async (orderData) => {
+    try {
+        const response = await api.post(`/order`, orderData);
+        return response.data; // 성공적으로 받은 데이터 반환
+    } catch (error) {
+        // 오류 처리
+        console.error('주문 생성 실패:', error.response?.data || error.message);
+        throw error; // 오류를 호출한 쪽으로 다시 던짐
+    }
+};

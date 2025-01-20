@@ -15,7 +15,7 @@ const Sidebar = () => {
                 <ul className="list-none p-0 m-0">
                     <li>
                         <Link
-                            to="/products/all"
+                            to="/"
                             className="block font-bold pr-5 py-2 text-sm text-gray-600 hover:text-gray-800 text-right"
                         >
                             All Products
@@ -23,18 +23,21 @@ const Sidebar = () => {
                     </li>
                     <li>
                         <Link
-                            to="/products/coffee-bean"
-                            className="block font-bold pr-5 py-2 text-sm text-gray-600 hover:text-gray-800 text-right"
+                            to="/notice"
+                            className="block font-bold pr-5 py-2 text-sm text-gray-600 hover:text-gray-800 text-right group relative"
                         >
-                            Coffee Bean package
+                            공지사항
+                            <span
+                                className="absolute right-full top-1/2 -translate-y-1/2 mr-2 w-2 h-2 bg-red-500 rounded-full hidden group-hover:block"></span>
                         </Link>
                     </li>
                     <li>
                         <Link
-                            to="/products/capsule"
-                            className="block font-bold pr-5 py-2 text-sm text-gray-600 hover:text-gray-800 text-right"
+                            to="/events"
+                            className="block font-bold pr-5 py-2 text-sm text-gray-600 hover:text-gray-800 text-right group relative"
                         >
-                            Capsule
+                            이벤트/세일
+                            <span className="bg-yellow-400 text-xs px-1 ml-1 rounded-full text-white">New</span>
                         </Link>
                     </li>
                 </ul>

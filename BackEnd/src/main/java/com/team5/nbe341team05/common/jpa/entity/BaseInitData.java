@@ -40,7 +40,7 @@ public class BaseInitData {
                     .description("Menu description" + i)
                     .price(1000 * i)
                     .stock(10)
-                    .image(String.format("./src/main/resources/static/images/menu%s.jpg", i))
+                    .image(String.format("menu%s.jpg", i))
                     .build();
 
             menuService.create(menuRequestDto);

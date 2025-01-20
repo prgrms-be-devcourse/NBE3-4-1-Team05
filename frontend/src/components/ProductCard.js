@@ -1,8 +1,10 @@
 // ProductCard.js
 import React, { useState } from 'react';
+import { ImageOff } from 'lucide-react';
 
-const ProductCard = ({ image, title, price, onClick }) => {
+const ProductCard = ({ image, title, price, onClick, product }) => {
     const [quantity, setQuantity] = useState(0);
+    const [imageError, setImageError] = useState(false);
 
     const handleIncrement = (e) => {
         e.stopPropagation();
@@ -16,9 +18,61 @@ const ProductCard = ({ image, title, price, onClick }) => {
         }
     };
 
+    // OrderPage의 addToCart 로직을 직접 사용
+    const addToCart = (menuId, menuName, quantity, price) => {
+        // 여기서 OrderPage의 menus state를 직접 접근할 수 없으므로,
+        // localStorage를 사용하여 장바구니 데이터를 저장할 수 있습니다
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+        const existingItem = cartItems.find(item => item.menuId === menuId);
+        if (existingItem) {
+            existingItem.quantity += quantity;
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        } else {
+            cartItems.push({ menuId, menuName, quantity, price });
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        }
+    };
+
     const handleAddClick = (e) => {
         e.stopPropagation();
-        // 추가 버튼 로직
+        if (quantity === 0) {
+            alert('수량을 선택해주세요.');
+            return;
+        }
+
+        // localStorage에서 현재 장바구니 데이터를 가져옴
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+        // OrderPage의 addToCart 메서드 형식에 맞춰서 데이터 전달
+        // 새로운 아이템 생성
+        const newItem = {
+            menuId: product.id,
+            menuName: product.productName,
+            quantity: quantity,
+            price: product.price
+        };
+
+        // 이미 존재하는 아이템인지 확인
+        const existingItemIndex = cartItems.findIndex(item => item.menuId === product.id);
+
+        if (existingItemIndex !== -1) {
+            // 기존 아이템이 있으면 수량만 증가
+            cartItems[existingItemIndex].quantity += quantity;
+        } else {
+            // 새로운 아이템 추가
+            cartItems.push(newItem);
+        }
+
+        // 장바구니 데이터 저장
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+        alert('장바구니에 추가되었습니다.');
+        setQuantity(0); // 수량 초기화
+    };
+
+    const handleImageError = () => {
+        setImageError(true);
     };
 
     return (
@@ -27,11 +81,21 @@ const ProductCard = ({ image, title, price, onClick }) => {
             onClick={onClick}
         >
             <div className="relative pb-[60%] overflow-hidden">
-                <img
-                    src={image}
-                    alt={title}
-                    className="absolute top-0 left-0 w-full h-full object-contain bg-gray-50"
-                />
+                {(!image || imageError) ? (
+                    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-100">
+                        <ImageOff
+                            size={48}
+                            className="text-gray-400"
+                        />
+                    </div>
+                ) : (
+                    <img
+                        src={image}
+                        alt={title}
+                        className="absolute top-0 left-0 w-full h-full object-contain bg-gray-50"
+                        onError={handleImageError}
+                    />
+                )}
             </div>
             <div className="p-4">
                 <h3 className="text-base font-normal text-[#333] mb-1">{title}</h3>

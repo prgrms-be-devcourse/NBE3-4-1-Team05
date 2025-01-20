@@ -14,12 +14,12 @@ const Navbar = () => {
             <div>
                 <ul className="flex list-none m-0 p-0">
                     <li className="ml-8 relative">
-                        <Link to="/order" className="text-white no-underline">
+                        <Link to="/order/email" className="text-white no-underline">
                             주문 조회
                         </Link>
                     </li>
                     <li className="ml-8 relative">
-                        <Link to="/cart" className="text-white no-underline">
+                        <Link to="/order" className="text-white no-underline">
                             장바구니
                         </Link>
                     </li>
@@ -28,18 +28,18 @@ const Navbar = () => {
                         onMouseEnter={() => setShowDropdown(true)}
                         onMouseLeave={() => setShowDropdown(false)}
                     >
-                        <Link to="/admin" className="text-white no-underline">
-                            관리자 페이지
-                        </Link>
+                        <span className="text-white cursor-pointer">
+                           관리자 페이지
+                        </span>
                         {showDropdown && (
                             <ul className="absolute top-full right-0 bg-[#333] py-2 min-w-[150px] rounded shadow-md list-none">
                                 <li className="m-0 p-2 hover:bg-[#444]">
-                                    <Link to="/admin/order" className="text-white no-underline block">
+                                    <Link to="/login" className="text-white no-underline block">
                                         주문 조회
                                     </Link>
                                 </li>
                                 <li className="m-0 p-2 hover:bg-[#444]">
-                                    <Link to="/admin/products" className="text-white no-underline block">
+                                    <Link to="/login" className="text-white no-underline block">
                                         상품 조회
                                     </Link>
                                 </li>
