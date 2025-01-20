@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { orderList } from "../DL/api";
 import { useLocation, useNavigate } from "react-router-dom";
-import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
 
 const OrderList = () => {
   const location = useLocation(); // useLocation 훅으로 state 받기

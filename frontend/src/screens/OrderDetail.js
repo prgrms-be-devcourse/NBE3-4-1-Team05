@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { orderDetail, cancelOrder } from "../DL/api"; // 주문 상세 API 호출 함수
-import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
 
 const OrderDetail = () => {
   const { id } = useParams(); // URL에서 주문 번호(id) 가져오기
