@@ -22,7 +22,7 @@ const ProductList = () => {
         setLoading(true); // 로딩 상태 추가
     };
 
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         try {
             if (!hasMore) return;
             const response = await getAllMenu(page, sortOption);
@@ -34,7 +34,7 @@ const ProductList = () => {
             setError('메뉴를 불러오는데 실패했습니다.');
             setLoading(false);
         }
-    };
+    }, [page, sortOption, hasMore]);
 
     const lastProductCallback = useCallback(node => {
         if (loading) return;
@@ -44,7 +44,7 @@ const ProductList = () => {
         }
 
         observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
+            if (entries[0].isIntersecting && hasMore && !loading) {  // loading 체크 추가
                 setPage(prevPage => prevPage + 1);
             }
         });
@@ -53,6 +53,15 @@ const ProductList = () => {
             observer.current.observe(node);
         }
     }, [loading, hasMore]);
+
+    // cleanup 추가
+    useEffect(() => {
+        return () => {
+            if (observer.current) {
+                observer.current.disconnect();
+            }
+        };
+    }, []);
 
     const isFirstRender = useRef(true);
 
