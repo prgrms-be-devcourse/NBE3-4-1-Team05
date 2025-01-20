@@ -33,6 +33,7 @@ public class OrderResponseDto {
         this.deliveryStatus = order.isDeliveryStatus();
         this.omlist = order.getOrderMenus().stream()
                 .map(orderMenu -> new OrderMenuDto(
+                        orderMenu.getMenu().getId(),
                         orderMenu.getMenu().getProductName(),
                         orderMenu.getQuantity())).toList();
     }

@@ -34,12 +34,12 @@ const Navbar = () => {
                         {showDropdown && (
                             <ul className="absolute top-full right-0 bg-[#333] py-2 min-w-[150px] rounded shadow-md list-none">
                                 <li className="m-0 p-2 hover:bg-[#444]">
-                                    <Link to="/login" className="text-white no-underline block">
+                                    <Link to="/admin/orders" className="text-white no-underline block">
                                         주문 조회
                                     </Link>
                                 </li>
                                 <li className="m-0 p-2 hover:bg-[#444]">
-                                    <Link to="/login" className="text-white no-underline block">
+                                    <Link to="/admin/products" className="text-white no-underline block">
                                         상품 조회
                                     </Link>
                                 </li>

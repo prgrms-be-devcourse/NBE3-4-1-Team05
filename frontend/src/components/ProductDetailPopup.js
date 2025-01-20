@@ -8,6 +8,8 @@ const ProductDetailPopup = ({product, onClose}) => {
         setImageError(true);
     };
 
+    const API_BASE_URL = 'http://localhost:8080'; // 백엔드 API 주소
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg w-full max-w-4xl mx-4 relative">
@@ -28,7 +30,7 @@ const ProductDetailPopup = ({product, onClose}) => {
                             </div>
                         ) : (
                             <img
-                                src={`http://localhost:8080/images/${product.image}`}
+                                src={`${API_BASE_URL}/images/${product.image}`}
                                 alt={product.title}
                                 className="h-[400px] w-full object-contain rounded-lg bg-gray-50"
                                 onError={handleImageError}
@@ -37,7 +39,7 @@ const ProductDetailPopup = ({product, onClose}) => {
                     </div>
                     <div className="w-full md:w-1/2 md:pl-6 mt-4 md:mt-0">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                            {product.productName}
+                            {product.title}
                         </h2>
                         <p className="text-xl font-bold text-gray-600 mb-4">
                             {product.price.toLocaleString()}원

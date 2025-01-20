@@ -2,6 +2,7 @@ package com.team5.nbe341team05.domain.menu.entity;
 
 import com.team5.nbe341team05.common.jpa.entity.BaseTime;
 import com.team5.nbe341team05.domain.cartMenu.entity.CartMenu;
+import com.team5.nbe341team05.domain.menu.dto.MenuRequestDto;
 import com.team5.nbe341team05.domain.orderMenu.entity.OrderMenu;
 import jakarta.persistence.*;
 import lombok.*;
@@ -55,6 +56,22 @@ public class Menu extends BaseTime {
 
     public void update(String productName, int price, int stock, String image) {
         this.productName = productName;
+        this.price = price;
+        this.stock = stock;
+        this.image = image;
+    }
+
+    public Menu(MenuRequestDto menuRequestDto, String imagePath) {
+        this.productName = menuRequestDto.getProductName();
+        this.description = menuRequestDto.getDescription();
+        this.price = menuRequestDto.getPrice();
+        this.stock = menuRequestDto.getStock();
+        this.image = imagePath; // 이미지 경로 설정
+    }
+    @Builder
+    public Menu(String productName, String description, int price, int stock, String image) {
+        this.productName = productName;
+        this.description = description;
         this.price = price;
         this.stock = stock;
         this.image = image;

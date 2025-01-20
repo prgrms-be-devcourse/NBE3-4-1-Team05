@@ -1,4 +1,3 @@
-// ProductCard.js
 import React, { useState } from 'react';
 import { ImageOff } from 'lucide-react';
 
@@ -20,7 +19,6 @@ const ProductCard = ({ image, title, price, onClick, product }) => {
 
     // OrderPage의 addToCart 로직을 직접 사용
     const addToCart = (menuId, menuName, quantity, price) => {
-        // 여기서 OrderPage의 menus state를 직접 접근할 수 없으므로,
         // localStorage를 사용하여 장바구니 데이터를 저장할 수 있습니다
         const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
 

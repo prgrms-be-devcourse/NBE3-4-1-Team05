@@ -6,15 +6,23 @@ import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.repository.MenuRepository;
 import com.team5.nbe341team05.domain.menu.type.MenuSortType;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -44,33 +52,66 @@ public class MenuService {
         return menuRepository.count();
     }
 
+    @SneakyThrows
     @Transactional
-    public Menu updateMenu(long id, MenuRequestDto menuRequestDto) {
+    public Menu updateMenu(long id, MenuRequestDto menuRequestDto, MultipartFile image) throws IOException {
         Menu menu = menuRepository.findById(id).orElseThrow(() -> new ServiceException("404", "해당 상품을 찾을 수 없습니다."));
+        String imagePath = saveImage(image);
         menu.update(
                 menuRequestDto.getProductName(),
                 menuRequestDto.getPrice(),
                 menuRequestDto.getStock(),
-                menuRequestDto.getImage());
+                imagePath);
         return menu;
     }
     @Transactional
-    public Menu create(MenuRequestDto menuRequestDto) {
+    public Menu create(MenuRequestDto menuRequestDto, MultipartFile image) throws IOException {
+
+        String imagePath = saveImage(image);
+
         Menu menu = Menu.builder()
                 .productName(menuRequestDto.getProductName())
                 .description(menuRequestDto.getDescription())
                 .price(menuRequestDto.getPrice())
                 .stock(menuRequestDto.getStock())
-                .image(menuRequestDto.getImage())
+                .image(imagePath)
                 .views(0)
                 .build();
-        Menu saveMenu = menuRepository.save(menu);
 
-        return saveMenu;
+        menuRepository.save(menu);
+
+        return menu;
     }
+
     @Transactional
     public void deleteMenu(Long id) {
-        Menu menu = menuRepository.findById(id).orElseThrow(()->new ServiceException("404","해당 상품을 찾을 수 없습니다."));
+        Menu menu = menuRepository.findById(id).orElseThrow(() -> new ServiceException("404","해당 상품을 찾을 수 없습니다."));
         menuRepository.delete(menu);
+    }
+
+    @Value("${upload.path}")
+    private String uploadDirPath;
+
+
+    @Transactional
+    @SneakyThrows
+    public String saveImage(MultipartFile imageFile) throws IOException {
+        if (imageFile == null || imageFile.isEmpty()) {
+            return null; // 이미지가 없을 경우 null 처리
+        }
+
+        String uploadDir = Paths.get(uploadDirPath).toAbsolutePath().toString();;
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs(); // 디렉토리 없으면 생성
+        }
+
+        String originalFilename = imageFile.getOriginalFilename();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+
+        Path filePath = Paths.get(uploadDir, originalFilename);
+        imageFile.transferTo(filePath.toFile());
+
+        return originalFilename;
     }
 }

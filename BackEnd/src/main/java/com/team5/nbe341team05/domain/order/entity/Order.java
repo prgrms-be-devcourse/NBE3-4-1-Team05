@@ -10,7 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "\"order\"")
+@Table(name = "\"orders\"")
 public class Order extends BaseTime {
 
     @Id
@@ -51,8 +50,10 @@ public class Order extends BaseTime {
     }
 
     public void addOrderMenu(OrderMenu orderMenu) {
-        this.orderMenus.add(orderMenu);
-        orderMenu.setOrder(this);
+        if (!this.orderMenus.contains(orderMenu)) {
+            this.orderMenus.add(orderMenu);
+            orderMenu.setOrder(this);
+        }
     }
 
     public void calculateTotalPrice() {

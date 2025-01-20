@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class OrderMenuDto {
+    private Long menuId;
     private String name;
     private int quantity;
-
 }
