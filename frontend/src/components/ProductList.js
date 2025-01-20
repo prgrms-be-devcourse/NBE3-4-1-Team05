@@ -19,20 +19,24 @@ const ProductList = () => {
         setSortOption(e.target.value);
         setPage(0);
         setProducts([]);
+        setHasMore(true);
         setLoading(true); // 로딩 상태 추가
     };
 
     const fetchProducts = useCallback(async () => {
         try {
             if (!hasMore) return;
+            setLoading(true);
             const response = await getAllMenu(page, sortOption);
+            console.log('API Response:', response.data); // 응답 확인용
             const newProducts = response.data.data.content;
             setProducts(prev => page === 0 ? newProducts : [...prev, ...newProducts]);
             setHasMore(!response.data.data.last);
-            setLoading(false);
         } catch (error) {
+            console.error('API Error:', error); // 에러 확인용
             setError('메뉴를 불러오는데 실패했습니다.');
-            setLoading(false);
+        } finally {
+            setLoading(false); // 성공/실패 상관없이 로딩 상태 해제
         }
     }, [page, sortOption, hasMore]);
 
