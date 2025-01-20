@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
-import ProductList from "../components/ProductList";
+import AdminProductList from "../components//ProductList";
 
 const MainMenuScreen = () => {
     return (
@@ -14,7 +14,7 @@ const MainMenuScreen = () => {
                     flex: 1,
                     paddingTop: '20px'
                 }}>
-                    <ProductList />
+                    <AdminProductList />
                 </main>
             </div>
         </div>

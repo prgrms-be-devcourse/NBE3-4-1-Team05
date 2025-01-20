@@ -81,26 +81,50 @@ export const addMenu = async (menuData, image) => {
 export const adminApi = {
   getAllOrders: async () => {
     try {
-        // API 경로 수정
-        const response = await api.get('/admin/order');  // 또는 실제 백엔드 경로에 맞게 수정
-        return response;
+      // API 경로 수정
+      const response = await api.get('/admin/order');  // 또는 실제 백엔드 경로에 맞게 수정
+      return response;
     } catch (error) {
-        console.error('getAllOrders Error:', error);
-        throw error;
+      console.error('getAllOrders Error:', error);
+      throw error;
     }
-},
-getOrderDetail: async (orderId) => {
+  },
+  getOrderDetail: async (orderId) => {
     try {
-        // API 경로 수정
-        const response = await api.get(`/admin/order/${orderId}`);  // 또는 실제 백엔드 경로에 맞게 수정
-        return response;
+      // API 경로 수정
+      const response = await api.get(`/admin/order/${orderId}`);  // 또는 실제 백엔드 경로에 맞게 수정
+      return response;
     } catch (error) {
-        console.error('getOrderDetail Error:', error);
-        throw error;
+      console.error('getOrderDetail Error:', error);
+      throw error;
     }
-},
+  },
+  modifyMenu: async (menuId, menuData, image) => {
+    try {
+      const formData = new FormData();
+
+      const menuBlob = new Blob([JSON.stringify(menuData)], {
+        type: 'application/json'
+      });
+      formData.append('menuRequestDto', menuBlob);
+
+      // 이미지가 있는 경우에만 추가
+      /*if (image) {
+        formData.append('image', image);
+      }*/
+
+      const response = await axios.post(`${API_BASE_URL}/admin/menus/${menuId}`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+      return response.data;
+    } catch (error) {
+      console.error('modifyMenu Error:', error);
+      throw error;
+    }
+  },
   cancelOrder: (orderId) => api.delete(`/admin/order/${orderId}`),
-  modifyMenu: (menuId, menuData) => api.put(`/admin/menus/${menuId}`, menuData),
   cancelMenu: (menuId) => api.delete(`/admin/menus/${menuId}`)
 };
 

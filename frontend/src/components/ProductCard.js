@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 const ProductCard = ({ image, title, price, onClick }) => {
     const [quantity, setQuantity] = useState(0);
+    const API_BASE_URL = 'http://localhost:8080';
 
     const handleIncrement = (e) => {
         e.stopPropagation();
@@ -28,7 +29,7 @@ const ProductCard = ({ image, title, price, onClick }) => {
         >
             <div className="relative pb-[60%] overflow-hidden">
                 <img
-                    src={image}
+                    src={`${API_BASE_URL}/images/${image}`}
                     alt={title}
                     className="absolute top-0 left-0 w-full h-full object-contain bg-gray-50"
                 />

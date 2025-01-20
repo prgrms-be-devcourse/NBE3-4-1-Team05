@@ -1,15 +1,36 @@
 // ProductCard.js
-import React, { useState } from 'react';
+import React from 'react';
 import { adminApi } from '../../DL/api';
+import { useNavigate } from 'react-router-dom';
 
-const ProductCard = ({ image, title, price, onClick }) => {
-    
+const AdminProductCard = ({ image, title, price, id, description, stock, onClick}) => {
+    const API_BASE_URL = 'http://localhost:8080';
+    const navigate = useNavigate();
+
     const handleCancel = async () => {
-        await adminApi.cancelMenu(menuId);
+        try {
+            if (window.confirm('정말로 삭제하시겠습니까?')) {
+                await adminApi.cancelMenu(id);  // id 전달
+                window.location.reload();  // 페이지 새로고침
+            }
+        } catch (error) {
+            console.error('삭제 실패:', error);
+            alert('삭제에 실패했습니다.');
+        }
     };
 
-    const handleModify = async () => {
-        await adminApi.modifyMenu(menuId, menuData);
+    const handleModify = async (e) => {
+        e.stopPropagation()
+        navigate(`/admin/modify/${id}`, { 
+            state: { 
+                id,
+                title,
+                price,
+                image,
+                description,
+                stock
+            } 
+        });
     };
 
     return (
@@ -29,7 +50,7 @@ const ProductCard = ({ image, title, price, onClick }) => {
                 <p className="text-base text-[#666] font-normal mb-4">
                     {price.toLocaleString()}원
                 </p>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-end space-x-2">
                 <button
                         className="px-4 py-1.5 bg-gray-800 text-white text-sm rounded hover:bg-gray-700"
                         onClick={handleCancel}
@@ -48,4 +69,4 @@ const ProductCard = ({ image, title, price, onClick }) => {
     );
 };
 
-export default ProductCard;
+export default AdminProductCard;
