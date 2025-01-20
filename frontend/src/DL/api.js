@@ -103,21 +103,20 @@ export const adminApi = {
     try {
       const formData = new FormData();
 
-      const menuBlob = new Blob([JSON.stringify(menuData)], {
+      formData.append('menuRequestDto', new Blob([JSON.stringify(menuData)], {
         type: 'application/json'
-      });
-      formData.append('menuRequestDto', menuBlob);
+      }));
 
-      // 이미지가 있는 경우에만 추가
-      /*if (image) {
+      // 새로운 이미지가 있는 경우에만 추가
+      if (image instanceof File) {
         formData.append('image', image);
-      }*/
-
-      const response = await axios.post(`${API_BASE_URL}/admin/menus/${menuId}`, formData, {
+      }
+      const response = await api.post(`/admin/menus/${menuId}`, formData, {
         headers: {
-            'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data',
         },
-    });
+        withCredentials: true,
+      });
       return response.data;
     } catch (error) {
       console.error('modifyMenu Error:', error);

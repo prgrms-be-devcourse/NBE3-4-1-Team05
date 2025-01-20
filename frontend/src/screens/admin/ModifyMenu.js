@@ -69,16 +69,25 @@ const ModifyMenu = () => {
                 productName: menuData.name,
                 description: menuData.description,
                 price: parseInt(menuData.price),
-                stock: parseInt(menuData.stock)
+                stock: parseInt(menuData.stock),
+                image: previewImage
             };
             
+            console.log('Submitting menu data:', menuRequestData);  // 데이터 로그
+        console.log('File to upload:', file);  // 파일 로그
  
-            await adminApi.modifyMenu(id, menuRequestData, file);
+        const result = await adminApi.modifyMenu(id, menuRequestData, file);
+        console.log('Modification result:', result);
         
+        if (result) {
             alert("메뉴가 성공적으로 수정되었습니다!");
             navigate("/admin/menus");
+        } else {
+            throw new Error("메뉴 수정에 실패했습니다.");
+        }
         } catch (err) {
-            alert(err.message);
+            console.error('메뉴 수정 실패:', err);
+        alert(err.message || "메뉴 수정에 실패했습니다.");
         }
     };
     return (
