@@ -99,7 +99,9 @@ getOrderDetail: async (orderId) => {
         throw error;
     }
 },
-  cancelOrder: (orderId) => api.delete(`/admin/order/${orderId}`)
+  cancelOrder: (orderId) => api.delete(`/admin/order/${orderId}`),
+  modifyMenu: (menuId, menuData) => api.put(`/admin/menus/${menuId}`, menuData),
+  cancelMenu: (menuId) => api.delete(`/admin/menus/${menuId}`)
 };
 
 // 주문 생성
