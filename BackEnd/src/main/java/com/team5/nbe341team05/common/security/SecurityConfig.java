@@ -1,5 +1,7 @@
 package com.team5.nbe341team05.common.security;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,12 +17,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -42,7 +48,20 @@ public class SecurityConfig {
                 .formLogin(login -> login
                         .loginPage("/login") // 로그인 페이지 설정
                         .loginProcessingUrl("/perform_login")
-                        .defaultSuccessUrl("/admin/order", true) // 로그인 성공 후 리다이렉트
+                        .successHandler(new AuthenticationSuccessHandler() {
+                            @Override
+                            public void onAuthenticationSuccess(HttpServletRequest request,
+                                                                HttpServletResponse response,
+                                                                Authentication authentication) throws IOException {
+                                String redirectUrl = request.getParameter("redirectUrl");
+                                if (redirectUrl != null && redirectUrl.startsWith("/admin/")) {
+                                    response.sendRedirect(redirectUrl);
+                                } else {
+                                    response.sendRedirect("/admin/order");
+                                }
+
+                            }
+                        }) // 로그인 성공 후 리다이렉트
                         .permitAll()
                 )
                 .logout(logout -> logout
