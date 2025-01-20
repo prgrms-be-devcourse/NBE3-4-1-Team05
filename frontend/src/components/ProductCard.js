@@ -1,8 +1,9 @@
-// ProductCard.js
 import React, { useState } from 'react';
+import { ImageOff } from 'lucide-react';
 
-const ProductCard = ({ image, title, price, onClick }) => {
+const ProductCard = ({ image, title, price, onClick, product }) => {
     const [quantity, setQuantity] = useState(0);
+    const [imageError, setImageError] = useState(false);
 
     const handleIncrement = (e) => {
         e.stopPropagation();
@@ -16,9 +17,41 @@ const ProductCard = ({ image, title, price, onClick }) => {
         }
     };
 
+    // OrderPage의 addToCart 로직을 직접 사용
+    const addToCart = (menuId, menuName, quantity, price) => {
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
+        const existingItem = cartItems.find(item => item.menuId === menuId);
+        if (existingItem) {
+            existingItem.quantity += quantity;
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        } else {
+            cartItems.push({ menuId, menuName, quantity, price });
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        }
+    };
+
     const handleAddClick = (e) => {
         e.stopPropagation();
-        // 추가 버튼 로직
+        if (quantity === 0) {
+            alert('수량을 선택해주세요.');
+            return;
+        }
+
+        // OrderPage의 addToCart 메서드 형식에 맞춰서 데이터 전달
+        addToCart(
+            product.id,          // menuId
+            product.productName, // menuName
+            quantity,           // quantity
+            product.price       // price
+        );
+
+        alert('장바구니에 추가되었습니다.');
+        setQuantity(0); // 수량 초기화
+    };
+
+    const handleImageError = () => {
+        setImageError(true);
     };
 
     return (
@@ -27,11 +60,21 @@ const ProductCard = ({ image, title, price, onClick }) => {
             onClick={onClick}
         >
             <div className="relative pb-[60%] overflow-hidden">
-                <img
-                    src={image}
-                    alt={title}
-                    className="absolute top-0 left-0 w-full h-full object-contain bg-gray-50"
-                />
+                {(!image || imageError) ? (
+                    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-100">
+                        <ImageOff
+                            size={48}
+                            className="text-gray-400"
+                        />
+                    </div>
+                ) : (
+                    <img
+                        src={image}
+                        alt={title}
+                        className="absolute top-0 left-0 w-full h-full object-contain bg-gray-50"
+                        onError={handleImageError}
+                    />
+                )}
             </div>
             <div className="p-4">
                 <h3 className="text-base font-normal text-[#333] mb-1">{title}</h3>

@@ -2,6 +2,7 @@ package com.team5.nbe341team05.domain.menu.controller;
 
 import com.team5.nbe341team05.common.response.ResponseMessage;
 import com.team5.nbe341team05.domain.menu.dto.MenuResponseDto;
+import com.team5.nbe341team05.domain.menu.entity.Menu;
 import com.team5.nbe341team05.domain.menu.repository.MenuRepository;
 import com.team5.nbe341team05.domain.menu.service.MenuService;
 import com.team5.nbe341team05.domain.menu.type.MenuSortType;
@@ -21,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
+import static java.awt.SystemColor.menu;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -189,16 +192,18 @@ class MenuControllerTest {
     @DisplayName("메뉴 단건 조회 성공")
     void getMenuById_Success() {
         // given
-        Long menuId = menuService.getAllMenus(0, MenuSortType.RECENT)
-                .getContent().get(0).getId();
+        List<Menu> menus = menuService.getAllMenus(0, MenuSortType.RECENT).getContent();
+        Menu menu1 = menus.get(0);
+
 
         // when
-        ResponseMessage<MenuResponseDto> response = menuController.getMenuById(menuId);
+        ResponseMessage<MenuResponseDto> response = menuController.getMenuById(menu1.getId());
 
         // then
         assertThat(response.message()).contains("번 메뉴가 성공적으로 조회되었습니다.");
+        assertThat(response.data().getImage()).isEqualTo(menu1.getImage());
         assertThat(response.resultCode()).isEqualTo("200");
-        assertThat(response.data().getId()).isEqualTo(menuId);
+        assertThat(response.data().getId()).isEqualTo(menu1.getId());
     }
 
     @Order(8)

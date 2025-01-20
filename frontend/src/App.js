@@ -12,6 +12,7 @@ import LoginPage from "./components/login";
 import AddMenuPage from "./screens/addMenu";
 import AdminOrderDetail from "./screens/AdminOrderDetail";
 import AdminOrderList from './screens/AdminOrderList';
+import Login from './components/login';
 
 function App() {
   return (
@@ -25,7 +26,8 @@ function App() {
         {/* /login 경로에 LoginPage 컴포넌트를 렌더링 */}
         <Route path="/login" element={<LoginPage />} />
         {/* 기본 경로 설정 */}
-        <Route path="/" element={<h1>Welcome to the Home Page</h1>} />
+        {/* <Route path="/" element={<h1>Welcome to the Home Page</h1>} /> */}
+        <Route path="/admin" element={<Login/>} />
         <Route path="/admin/addMenu" element={<AddMenuPage/>}/>
         <Route path="/admin/order/:id" element={<AdminOrderDetail />} />
         <Route path="/admin/orders" element={<AdminOrderList />} />
