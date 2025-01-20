@@ -186,6 +186,13 @@ const OrderPage = () => {
                             주문하기
                         </button>
                     </div>
+                    <div className="bg-white rounded-md shadow-md p-4">
+                        <h2 className="text-[20px] font-semibold mb-4 text-gray-700">안내 사항</h2>
+                        <ul className="list-disc list-inside text-gray-600">
+                            <li>당일 오후 2시 이후 주문은 익일 배송됩니다.</li>
+                            <li>발송 전 주문 건에 한하여 주소 수정 및 취소가 가능합니다.</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
