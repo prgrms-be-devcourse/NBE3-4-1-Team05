@@ -177,14 +177,21 @@ const OrderPage = () => {
                             onChange={(e) => setAddress(e.target.value)}
                             className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md shadow-sm"
                         />
-
-                        <button
+                        <div className="flex justify-center space-x-4 mt-4">
+                            <button
                             onClick={placeOrder}
                             className="px-4 py-2 text-white rounded-md hover:opacity-90"
                             style={{ backgroundColor: "#9EBA99" }}
-                        >
-                            주문하기
-                        </button>
+                            >
+                                주문하기
+                            </button>
+                            <button
+                            onClick={() => navigate("/")} // 메인 화면으로 이동
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                            >
+                                돌아가기
+                            </button>
+                        </div>
                     </div>
                     <div className="bg-white rounded-md shadow-md p-4">
                         <h2 className="text-[20px] font-semibold mb-4 text-gray-700">안내 사항</h2>
