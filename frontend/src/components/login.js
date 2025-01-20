@@ -26,7 +26,7 @@ const Login = () => {
       );
 
       console.log("Login successful:", response.data);
-      window.location.href = "/admin/order"; // 로그인 성공 시 이동할 경로
+      window.location.href = "/admin/orders"; // 로그인 성공 시 이동할 경로
   } catch (err) {
       console.error("Login failed:", err);
       setError("Invalid username or password");
