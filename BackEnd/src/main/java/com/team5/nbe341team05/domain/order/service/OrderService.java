@@ -98,7 +98,7 @@ public class OrderService {
     public OrderResponseDto updateOrder(String email, Long id, OrderUpdateRequestDto updateRequestDto) {
         Order order = orderRepository.findByEmailAndId(email, id).orElseThrow(() -> new ServiceException("404", "해당 이메일과 주문 번호로 주문을 찾을 수 없습니다."));
         if (order.isDeliveryStatus()) {
-            throw new ServiceException("404", "주문수정은 오후 2시 이전 주문건만 가능합니다.");
+            throw new ServiceException("404", "주문수정은 배송 준비중인 주문건만 가능합니다.");
         }
 
         for (CartMenuDto cartMenuDto : updateRequestDto.getOmlist()) {
@@ -138,6 +138,10 @@ public class OrderService {
     public void cancelOrder(String email, Long id) {
         Order order = orderRepository.findByEmailAndId(email, id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
+
+        if (order.isDeliveryStatus()) {
+            throw new ServiceException("404", "주문취소는 배송 준비중인 주문건만 가능합니다.");
+        }
 
         for (OrderMenu orderMenu : order.getOrderMenus()) {
             Menu menu = orderMenu.getMenu();
