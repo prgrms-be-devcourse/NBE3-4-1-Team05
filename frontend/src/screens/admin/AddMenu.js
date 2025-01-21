@@ -49,6 +49,7 @@ const AddMenu = () => {
         
             alert("메뉴가 성공적으로 추가되었습니다!");
             navigate("/admin/menus");
+            window.location.reload();  // 페이지 새로고침
         } catch (err) {
             alert(err.message);
         }
