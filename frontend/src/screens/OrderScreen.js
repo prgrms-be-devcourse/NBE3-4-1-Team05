@@ -27,15 +27,17 @@ const OrderPage = () => {
             setMenus(JSON.parse(storedCart));
         }
     }, []);
-
+    
     const updateQuantity = (menuId, change) => {
-        setMenus((prevMenus) =>
-            prevMenus.map((menu) =>
+        setMenus((prevMenus) => {
+            const updatedMenus = prevMenus.map((menu) =>
                 menu.menuId === menuId
                     ? { ...menu, quantity: Math.max(menu.quantity + change, 1) }
                     : menu
-            )
-        );
+            );
+            localStorage.setItem("cartItems", JSON.stringify(updatedMenus)); // 로컬 스토리지 갱신
+            return updatedMenus;
+        });
     };
 
    const removeFromCart = (menuId) => {
