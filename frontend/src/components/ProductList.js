@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ProductCard from './ProductCard';
 import ProductDetailPopup from './ProductDetailPopup';
-import { getAllMenu } from '../DL/api';
+import { getAllMenu, getMenu } from '../DL/api';
 
 
 const ProductList = () => {
@@ -13,30 +13,33 @@ const ProductList = () => {
     const [hasMore, setHasMore] = useState(true);
     const observer = useRef();
     const [sortOption, setSortOption] = useState('recent');
+    const API_BASE_URL = 'http://localhost:8080'; // 백엔드 API 주소
 
     // 정렬 옵션 변경 핸들러
     const handleSortChange = (e) => {
         setSortOption(e.target.value);
         setPage(0);
         setProducts([]);
+        setHasMore(true);
         setLoading(true); // 로딩 상태 추가
     };
-    const API_BASE_URL = 'http://localhost:8080'; // 백엔드 API 주소
 
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         try {
-            const response = await getAllMenu(page, sortOption); // API 호출 시 정렬 옵션 전달
+            if (!hasMore) return;
+            setLoading(true);
+            const response = await getAllMenu(page, sortOption);
+            console.log('API Response:', response.data); // 응답 확인용
             const newProducts = response.data.data.content;
-
             setProducts(prev => page === 0 ? newProducts : [...prev, ...newProducts]);
             setHasMore(!response.data.data.last);
-            setLoading(false);
-            console.log("response", response.data.data);
         } catch (error) {
+            console.error('API Error:', error); // 에러 확인용
             setError('메뉴를 불러오는데 실패했습니다.');
-            setLoading(false);
+        } finally {
+            setLoading(false); // 성공/실패 상관없이 로딩 상태 해제
         }
-    };
+    }, [page, sortOption, hasMore]);
 
     const lastProductCallback = useCallback(node => {
         if (loading) return;
@@ -46,7 +49,7 @@ const ProductList = () => {
         }
 
         observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
+            if (entries[0].isIntersecting && hasMore && !loading) {  // loading 체크 추가
                 setPage(prevPage => prevPage + 1);
             }
         });
@@ -56,6 +59,15 @@ const ProductList = () => {
         }
     }, [loading, hasMore]);
 
+    // cleanup 추가
+    useEffect(() => {
+        return () => {
+            if (observer.current) {
+                observer.current.disconnect();
+            }
+        };
+    }, []);
+
     const isFirstRender = useRef(true);
 
     useEffect(() => {
@@ -63,10 +75,17 @@ const ProductList = () => {
             isFirstRender.current = false;
         }
         fetchProducts();
-    }, [page, sortOption]);
+    }, [page, sortOption, fetchProducts]);
 
-    const handleProductClick = (product) => {
-        setSelectedProduct(product);
+    const handleProductClick = async (product) => {
+        try {
+            // 메뉴 조회 API 호출 (조회수 증가)
+            await getMenu(product.id);
+            setSelectedProduct(product);
+        } catch (error) {
+            console.error('메뉴 조회 실패:', error);
+            setSelectedProduct(product); // API 실패해도 팝업은 표시
+        }
     };
 
     const handleClosePopup = () => {
@@ -77,15 +96,6 @@ const ProductList = () => {
 
     return (
         <div className="flex min-h-[calc(100vh-60px)] mt-[60px]">
-            {/* Sidebar */}
-            <div className="w-[250px] fixed left-0 top-[60px] h-[calc(100vh-60px)] bg-white border-r border-[#e0e0e0] p-5">
-                <ul className="list-none p-0 m-0">
-                    <li className="py-2.5 cursor-pointer text-base text-[#333] hover:text-[#666]">All Products</li>
-                    <li className="py-2.5 cursor-pointer text-base text-[#333] hover:text-[#666]">Coffee Bean package</li>
-                    <li className="py-2.5 cursor-pointer text-base text-[#333] hover:text-[#666]">Capsule</li>
-                </ul>
-            </div>
-
             {/* Main Content */}
             <div className="flex-1 p-8">
                 {/* 정렬 드롭다운 */}

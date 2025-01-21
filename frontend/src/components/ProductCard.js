@@ -20,6 +20,7 @@ const ProductCard = ({ image, title, price, onClick, product }) => {
 
     // OrderPage의 addToCart 로직을 직접 사용
     const addToCart = (menuId, menuName, quantity, price) => {
+        // localStorage를 사용하여 장바구니 데이터를 저장할 수 있습니다
         const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
 
         const existingItem = cartItems.find(item => item.menuId === menuId);
@@ -39,13 +40,31 @@ const ProductCard = ({ image, title, price, onClick, product }) => {
             return;
         }
 
+        // localStorage에서 현재 장바구니 데이터를 가져옴
+        const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
         // OrderPage의 addToCart 메서드 형식에 맞춰서 데이터 전달
-        addToCart(
-            product.id,          // menuId
-            product.productName, // menuName
-            quantity,           // quantity
-            product.price       // price
-        );
+        // 새로운 아이템 생성
+        const newItem = {
+            menuId: product.id,
+            menuName: product.productName,
+            quantity: quantity,
+            price: product.price
+        };
+
+        // 이미 존재하는 아이템인지 확인
+        const existingItemIndex = cartItems.findIndex(item => item.menuId === product.id);
+
+        if (existingItemIndex !== -1) {
+            // 기존 아이템이 있으면 수량만 증가
+            cartItems[existingItemIndex].quantity += quantity;
+        } else {
+            // 새로운 아이템 추가
+            cartItems.push(newItem);
+        }
+
+        // 장바구니 데이터 저장
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
 
         alert('장바구니에 추가되었습니다.');
         setQuantity(0); // 수량 초기화

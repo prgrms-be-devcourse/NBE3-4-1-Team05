@@ -54,12 +54,9 @@ export const addMenu = async (menuData, image) => {
       type: 'application/json'
     }));
     formData.append("image", image);
-
-
     formData.forEach((value, key) => {
       console.log(`${key}:`, value);
     });
-
     const response = await api.post(`/admin/menus`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -154,9 +151,29 @@ export const cancelOrder = (email, id) => api.delete(`/order/${email}/${id}`);
 
 
 // 메뉴 전체 조회
-// export const getAllMenu = () => api.get(`/menus`);
-export const getAllMenu = (page = 0) => {
-  return api.get(`/menus?page=${page}`);
+// DL/api.js
+export const getAllMenu = (page = 0, sort = 'recent') => {
+    let sortParam;
+    switch(sort) {
+        case 'viewsDesc':
+            sortParam = 'VIEWS_DESC';
+            break;
+        case 'recent':
+            sortParam = 'RECENT';
+            break;
+        case 'oldest':
+            sortParam = 'OLDEST';
+            break;
+        case 'priceDesc':
+            sortParam = 'PRICE_DESC';
+            break;
+        case 'priceAsc':
+            sortParam = 'PRICE_ASC';
+            break;
+        default:
+            sortParam = 'RECENT';
+    }
+    return api.get(`/menus?page=${page}&sortType=${sortParam}`);
 };
 
 // 특정 메뉴 조회
