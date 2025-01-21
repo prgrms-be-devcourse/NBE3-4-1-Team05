@@ -29,17 +29,25 @@ const ProductList = () => {
             if (!hasMore) return;
             setLoading(true);
             const response = await getAllMenu(page, sortOption);
-            console.log('API Response:', response.data); // 응답 확인용
             const newProducts = response.data.data.content;
+
+            // 새로운 데이터가 없으면 hasMore를 false로 설정
+            if (newProducts.length === 0) {
+                setHasMore(false);
+                return;
+            }
+
             setProducts(prev => page === 0 ? newProducts : [...prev, ...newProducts]);
-            setHasMore(!response.data.data.last);
+            // 마지막 페이지인지 명확하게 체크
+            setHasMore(newProducts.length === 10); // 페이지 사이즈가 10이라고 가정
         } catch (error) {
-            console.error('API Error:', error); // 에러 확인용
+            console.error('API Error:', error);
             setError('메뉴를 불러오는데 실패했습니다.');
+            setHasMore(false); // 에러 발생시 hasMore를 false로 설정
         } finally {
-            setLoading(false); // 성공/실패 상관없이 로딩 상태 해제
+            setLoading(false);
         }
-    }, [page, sortOption, hasMore]);
+    }, [page, sortOption]);
 
     const lastProductCallback = useCallback(node => {
         if (loading) return;
