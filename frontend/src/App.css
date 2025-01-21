@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;  
+
 .App {
   text-align: center;
 }
@@ -35,4 +39,8 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.main-container {
+  @apply flex flex-1 pt-16; /* padding-top: 64px를 테일윈드로 변환 */
 }

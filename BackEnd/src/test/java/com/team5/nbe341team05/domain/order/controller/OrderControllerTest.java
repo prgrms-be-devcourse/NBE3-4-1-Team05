@@ -260,7 +260,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("주문 수정 실패 with 오후 2시 이후 주문")
+    @DisplayName("주문 수정 실패 with 배송중")
     void t9() throws Exception {
         Order order = orderService.findById(2L);
 
@@ -270,7 +270,7 @@ public class OrderControllerTest {
                                         {
                                           "email": "dev@dev.com",
                                           "address": "서울",
-                                          "menus": [
+                                          "omlist": [
                                             {
                                               "menuId": 1,
                                               "quantity": 2
@@ -290,7 +290,7 @@ public class OrderControllerTest {
         resultActions.andExpect(handler().handlerType(OrderController.class))
                 .andExpect(handler().methodName("updateOrder"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("주문수정은 오후 2시 이후 주문건만 가능합니다."))
+                .andExpect(jsonPath("$.message").value("주문수정은 배송 준비중인 주문건만 가능합니다."))
                 .andExpect(jsonPath("$.resultCode").value("404"));
     }
 

@@ -52,14 +52,12 @@ public class OrderService {
             cart.addCartMenu(cartMenu);
         }
 
-        // 배송 상태
-        boolean orderStatus = checkTime();
 
         // 주문 생성
         Order order = Order.builder()
                 .email(orderDto.getEmail())
                 .address(orderDto.getAddress())
-                .deliveryStatus(orderStatus)
+                .deliveryStatus(false)
                 .totalPrice(0)
                 .build();
 
@@ -97,8 +95,8 @@ public class OrderService {
     @Transactional
     public OrderResponseDto updateOrder(String email, Long id, OrderUpdateRequestDto updateRequestDto) {
         Order order = orderRepository.findByEmailAndId(email, id).orElseThrow(() -> new ServiceException("404", "해당 이메일과 주문 번호로 주문을 찾을 수 없습니다."));
-        if (!order.isDeliveryStatus()) {
-            throw new ServiceException("404", "주문수정은 오후 2시 이후 주문건만 가능합니다.");
+        if (order.isDeliveryStatus()) {
+            throw new ServiceException("404", "주문수정은 배송 준비중인 주문건만 가능합니다.");
         }
 
         for (CartMenuDto cartMenuDto : updateRequestDto.getOmlist()) {
@@ -139,6 +137,10 @@ public class OrderService {
         Order order = orderRepository.findByEmailAndId(email, id)
                 .orElseThrow(() -> new ServiceException("404", "해당 주문을 찾을 수 없습니다."));
 
+        if (order.isDeliveryStatus()) {
+            throw new ServiceException("404", "주문취소는 배송 준비중인 주문건만 가능합니다.");
+        }
+
         for (OrderMenu orderMenu : order.getOrderMenus()) {
             Menu menu = orderMenu.getMenu();
             int prevQuantity = orderMenu.getQuantity();
@@ -163,11 +165,6 @@ public class OrderService {
         }
 
         System.out.println("[자동] 오후 2시 - " + orderList.size() + "개의 주문 상태가 업데이트 되었습니다.");
-    }
-
-    public boolean checkTime() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.getHour() < 14;
     }
 
     public Optional<Order> findFirst() {
