@@ -68,8 +68,8 @@ const OrderDetail = () => {
       style={{
         width: "905px",
         height: "950px",
-        left: "50px",
-        top: "55px",
+        left: "550px",
+        top: "60px",
       }}
     >
       <Navbar />
