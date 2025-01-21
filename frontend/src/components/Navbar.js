@@ -43,10 +43,17 @@ const Navbar = () => {
                             주문 조회
                         </Link>
                     </li>
-                    <li className="ml-8 relative">
-                        <Link to="/order" className="text-white no-underline">
-                            장바구니
-                        </Link>
+                 <li className="ml-8 relative">
+                    <Link
+                     to="/order"
+                     className="text-white no-underline"
+                     onClick={() => {
+                        const cartItems = localStorage.getItem("cartItems");
+                        console.log("장바구니 데이터 확인:", JSON.parse(cartItems || "[]"));
+                    }}
+                    >
+                        장바구니
+                    </Link>
                     </li>
                     <li
                         className="ml-8 relative"

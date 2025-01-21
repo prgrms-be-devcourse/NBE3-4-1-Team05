@@ -21,6 +21,7 @@ const ProductList = () => {
         setProducts([]);
         setLoading(true); // 로딩 상태 추가
     };
+    const API_BASE_URL = 'http://localhost:8080'; // 백엔드 API 주소
 
     const fetchProducts = async () => {
         try {
@@ -30,6 +31,7 @@ const ProductList = () => {
             setProducts(prev => page === 0 ? newProducts : [...prev, ...newProducts]);
             setHasMore(!response.data.data.last);
             setLoading(false);
+            console.log("response", response.data.data);
         } catch (error) {
             setError('메뉴를 불러오는데 실패했습니다.');
             setLoading(false);
@@ -111,9 +113,10 @@ const ProductList = () => {
                         >
                             <div className="h-full">
                                 <ProductCard
-                                    image={product.image}
+                                    image={`${API_BASE_URL}/images/${product.image}`}
                                     title={product.productName}
                                     price={product.price}
+                                    product={product}
                                 />
                             </div>
                         </div>

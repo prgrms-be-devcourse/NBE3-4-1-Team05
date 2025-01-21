@@ -1,40 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { createOrder, getMenu } from "../DL/api";
+import { createOrder } from "../DL/api";
+import { useNavigate } from "react-router-dom";
 
 const OrderPage = () => {
-    const [menus, setMenus] = useState([]);
+    const [menus, setMenus] = useState([]); // 장바구니 상태
     const [email, setEmail] = useState("");
     const [address, setAddress] = useState("");
-    const [orderMessage, setOrderMessage] = useState("");
-    const [products, setProducts] = useState([]);
+    const navigate = useNavigate(); // useNavigate 훅 추가
 
     useEffect(() => {
-        const loadProducts = async () => {
+        const storedCart = localStorage.getItem("cartItems");
+        if (storedCart) {
             try {
-                const data = await getMenu();
-                setProducts(data); // API로 받은 데이터를 상태에 저장
+                const parsedCart = JSON.parse(storedCart);
+                setMenus(parsedCart);
             } catch (error) {
-                console.error("상품 리스트를 불러오는 중 오류 발생:", error);
+                setMenus([]);
             }
-        };
-
-        loadProducts();
+        }
     }, []);
 
-    const addToCart = (menuId, menuName, quantity, price) => {
-        setMenus((prevMenus) => {
-            const existingMenu = prevMenus.find((menu) => menu.menuId === menuId);
-            if (existingMenu) {
-                return prevMenus.map((menu) =>
-                    menu.menuId === menuId
-                        ? { ...menu, quantity: menu.quantity + quantity }
-                        : menu
-                );
-            } else {
-                return [...prevMenus, { menuId, menuName, quantity, price }];
-            }
-        });
-    };
+    useEffect(() => {
+        // 페이지 진입 시 로컬 스토리지에서 데이터 로드
+        const storedCart = localStorage.getItem("cartItems");
+        if (storedCart) {
+            setMenus(JSON.parse(storedCart));
+        }
+    }, []);
 
     const updateQuantity = (menuId, change) => {
         setMenus((prevMenus) =>
@@ -58,7 +50,7 @@ const OrderPage = () => {
         setMenus([]);
         setEmail("");
         setAddress("");
-        setOrderMessage("");
+        localStorage.removeItem("cartItems"); // 로컬 스토리지 초기화
     };
 
     const placeOrder = async () => {
@@ -74,17 +66,17 @@ const OrderPage = () => {
 
         try {
             const orderData = { email, address, menus };
-            console.log("Order Data:", orderData); // 전달되는 데이터 확인
+            console.log("Order Data:", orderData);
             const response = await createOrder(orderData);
             alert(`주문이 완료되었습니다! 총 결제 금액: ${calculateTotalPrice()}원`);
             resetOrderPage();
+            navigate("/");
             return response.data;
         } catch (error) {
             console.error("주문 실패 이유:", error.message);
             alert("주문에 실패했습니다. 다시 시도해주세요.");
         }
     };
-
 
     return (
         <div className="relative bg-gray-100 min-h-screen flex items-center justify-center py-8">
@@ -99,32 +91,53 @@ const OrderPage = () => {
                     {menus.length > 0 ? (
                         menus.map((menu, index) => (
                             <div
-                                key={index}
-                                className="flex justify-between items-center border-b border-gray-300 py-2"
-                            >
-                                <p>
-                                    {menu.menuName}, 수량: {menu.quantity}, 가격:{" "}
-                                    {menu.quantity * menu.price}원
-                                </p>
-                                <button
-                                    onClick={() => removeFromCart(menu.menuId)}
-                                    className="flex items-center justify-center w-8 h-8 text-gray-500 hover:text-red-500"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="w-5 h-5"
-                                    >
-                                        <line x1="18" y1="6" x2="6" y2="18" />
-                                        <line x1="6" y1="6" x2="18" y2="18" />
-                                    </svg>
-                                </button>
-                            </div>
+    key={index}
+    className="flex justify-between items-center border-b border-gray-300 py-2"
+>
+    <div>
+        <p>
+            {menu.menuName}, 수량: {menu.quantity}, 가격:{" "}
+            {menu.quantity * menu.price}원
+        </p>
+    </div>
+    <div className="flex items-center space-x-2">
+        {/* 수량 감소 버튼 */}
+        <button
+            onClick={() => updateQuantity(menu.menuId, -1)}
+            className="w-8 h-8 flex items-center justify-center bg-gray-200 text-gray-600 rounded hover:bg-gray-300"
+        >
+            -
+        </button>
+        <span className="w-8 text-center">{menu.quantity}</span>
+        {/* 수량 증가 버튼 */}
+        <button
+            onClick={() => updateQuantity(menu.menuId, 1)}
+            className="w-8 h-8 flex items-center justify-center bg-gray-200 text-gray-600 rounded hover:bg-gray-300"
+        >
+            +
+        </button>
+        {/* 삭제 버튼 */}
+        <button
+            onClick={() => removeFromCart(menu.menuId)}
+            className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-red-500"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-5 h-5"
+            >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+            </button>
+            </div>
+            </div>
+
                         ))
                     ) : (
                         <p className="text-gray-700">장바구니에 추가된 상품이 없습니다.</p>
@@ -141,7 +154,6 @@ const OrderPage = () => {
                     <div className="bg-white rounded-md shadow-md p-4">
                         <h2 className="text-[20px] font-semibold mb-4 text-gray-700">주문 정보</h2>
 
-                        {/* 이메일 입력 */}
                         <label htmlFor="email" className="block text-gray-600 mb-2 font-medium">
                             이메일
                         </label>
@@ -154,7 +166,6 @@ const OrderPage = () => {
                             className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md shadow-sm"
                         />
 
-                        {/* 주소 입력 */}
                         <label htmlFor="address" className="block text-gray-600 mb-2 font-medium">
                             주소
                         </label>
@@ -166,17 +177,22 @@ const OrderPage = () => {
                             onChange={(e) => setAddress(e.target.value)}
                             className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md shadow-sm"
                         />
-
-                        <button
+                        <div className="flex justify-center space-x-4 mt-4">
+                            <button
                             onClick={placeOrder}
                             className="px-4 py-2 text-white rounded-md hover:opacity-90"
                             style={{ backgroundColor: "#9EBA99" }}
-                        >
-                            주문하기
-                        </button>
+                            >
+                                주문하기
+                            </button>
+                            <button
+                            onClick={() => navigate("/")} // 메인 화면으로 이동
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                            >
+                                돌아가기
+                            </button>
+                        </div>
                     </div>
-
-                    {/* 안내 사항 */}
                     <div className="bg-white rounded-md shadow-md p-4">
                         <h2 className="text-[20px] font-semibold mb-4 text-gray-700">안내 사항</h2>
                         <ul className="list-disc list-inside text-gray-600">
@@ -185,7 +201,6 @@ const OrderPage = () => {
                         </ul>
                     </div>
                 </div>
-
             </div>
         </div>
     );

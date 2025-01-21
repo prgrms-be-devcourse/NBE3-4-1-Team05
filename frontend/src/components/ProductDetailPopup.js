@@ -1,6 +1,7 @@
 // ProductDetailPopup.js
 import React from 'react';
 
+
 const ProductDetailPopup = ({product, onClose}) => {
     const API_BASE_URL = 'http://localhost:8080';
     return (

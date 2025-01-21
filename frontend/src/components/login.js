@@ -29,8 +29,9 @@ const Login = () => {
               withCredentials: true
           }
       );
-
       window.location.href = redirectPath;
+      console.log("Login successful:", response.data);
+
   } catch (err) {
       console.error("Login failed:", err);
       setError("Invalid username or password");

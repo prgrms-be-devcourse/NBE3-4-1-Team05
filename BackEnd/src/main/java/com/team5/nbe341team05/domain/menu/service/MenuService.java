@@ -119,9 +119,8 @@ public class MenuService {
 
         String originalFilename = imageFile.getOriginalFilename();
         String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        String savedFilename = UUID.randomUUID() + extension;
 
-        Path filePath = Paths.get(uploadDir, savedFilename);
+        Path filePath = Paths.get(uploadDir, originalFilename);
         imageFile.transferTo(filePath.toFile());
 
         return savedFilename;
