@@ -46,20 +46,14 @@ public class SecurityConfig {
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
                 .formLogin(login -> login
                         .loginPage("/login") // 로그인 페이지 설정
-                        .loginProcessingUrl("/login")
-                        .successHandler(new AuthenticationSuccessHandler() {
-                            @Override
-                            public void onAuthenticationSuccess(HttpServletRequest request,
-                                                                HttpServletResponse response,
-                                                                Authentication authentication) throws IOException {
-                                String redirectUrl = request.getParameter("redirectUrl");
-                                if (redirectUrl != null && redirectUrl.startsWith("/admin/")) {
-                                    response.sendRedirect(redirectUrl);
-                                } else {
-                                    response.sendRedirect("/admin/order");
-                                }
-
+                        .successHandler((request, response, authentication) -> {
+                            String redirectUrl = request.getParameter("redirectUrl");
+                            if (redirectUrl != null && redirectUrl.startsWith("/admin/")) {
+                                response.sendRedirect(redirectUrl);
+                            } else {
+                                response.sendRedirect("/admin/order");
                             }
+
                         }) // 로그인 성공 후 리다이렉트
                         .permitAll()
                 )

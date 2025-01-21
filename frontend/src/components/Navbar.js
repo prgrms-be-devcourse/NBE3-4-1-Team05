@@ -7,22 +7,14 @@ const Navbar = () => {
     
     const handleAdminMenuClick = async (path) => {
         try {
-            const response = await fetch('/api/auth/check', {
-                credentials: 'include'
+            // state에 리다이렉트 경로 저장
+            navigate('/login', {
+                state: { redirectTo: path },
+                replace: true  // 히스토리 스택에 쌓이지 않도록 설정
             });
-            
-            if (!response.ok) {
-                // state에 리다이렉트 경로 저장
-                navigate('/login', { 
-                    state: { redirectTo: path },
-                    replace: true  // 히스토리 스택에 쌓이지 않도록 설정
-                });
-            } else {
-                navigate(path);
-            }
         } catch (error) {
             console.error('인증 확인 실패:', error);
-            navigate('/login', { 
+            navigate('/login', {
                 state: { redirectTo: path },
                 replace: true
             });

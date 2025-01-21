@@ -37,8 +37,7 @@ function App() {
         <Route path="/admin/order/detail/:id" element={<AdminOrderDetail />} />
         <Route path="/admin/order" element={<AdminOrderList />} />
         <Route path="/" element={<MainMenuScreen />} />
-        <Route path="/admin/order/list" element={<OrderList />} />
-        <Route path="/admin/modify/:id" element={<ModifyMenuPage />} />
+        <Route path="/admin/modify/:id" element={<ModifyMenuPage />} /> 
         <Route path="/admin/menus" element={<AdminMenuScreen />} />
       </Routes>
     </Router>
