@@ -16,7 +16,6 @@ import AdminOrderDetail from "./screens/admin/AdminOrderDetail";
 import AdminOrderList from './screens/admin/AdminOrderList';
 import AdminMenuScreen from './screens/admin/AdminMenuScreen';
 import ModifyMenuPage from './screens/admin/ModifyMenu';
-import Layout from './components/Layout';
 
 function App() {
   return (

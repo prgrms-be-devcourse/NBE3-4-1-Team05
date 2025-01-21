@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { orderList } from "../DL/api";
 import { useLocation, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const OrderList = () => {
   const location = useLocation(); // useLocation 훅으로 state 받기
@@ -52,6 +53,7 @@ const OrderList = () => {
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
+      <Navbar />
       <h1 className="text-3xl font-bold mb-6 border-b-2 pb-4 text-gray-800">
         주문 조회
       </h1>

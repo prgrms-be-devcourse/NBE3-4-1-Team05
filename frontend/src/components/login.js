@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useLocation } from 'react-router-dom';
 import { FaRegUserCircle } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
-import axios from "axios";
 import "../index.css";
+import { adminLogin } from "../DL/api";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -13,29 +13,18 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const redirectPath = location.state?.redirectTo || '/admin/order';
-      await axios.post(
-          "/perform_login",
-          new URLSearchParams({
-              username,
-              password,
-              redirectUrl: redirectPath  // 리다이렉트 URL 추가
-          }),
-          {
-              headers: {
-                  "Content-Type": "application/x-www-form-urlencoded",
-              },
-              withCredentials: true
-          }
-      );
-      window.location.href = redirectPath;
+    setError(""); // 오류 초기화
 
-  } catch (err) {
-      console.error("Login failed:", err);
-      setError("Invalid username or password");
-  }
+    try {
+        const redirectPath = location.state?.redirectTo || '/admin/order';
+        await adminLogin(username.trim(), password.trim()); // 공백 제거
+        window.location.href = redirectPath;
+    } catch (err) {
+        console.error("로그인 실패:", err);
+        setError("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
 };
+
 
   return (
     <div className="flex items-center justify-center w-screen h-screen bg-gray-300">

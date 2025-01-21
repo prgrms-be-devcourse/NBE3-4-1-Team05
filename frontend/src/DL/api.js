@@ -75,6 +75,22 @@ export const addMenu = async (menuData, image) => {
   }
 };
 
+export const adminLogin = async (username, password) => {
+  const response = await api.post('/login', 
+    new URLSearchParams({
+      username,
+      password
+    }), 
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      withCredentials: true
+    }
+  );
+  return response.data;
+};
+
 export const adminApi = {
   getAllOrders: async () => {
     try {

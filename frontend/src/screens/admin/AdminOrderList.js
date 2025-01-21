@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { adminApi } from '../../DL/api';
 import { useNavigate } from "react-router-dom";
+import Navbar from '../../components/Navbar';
 
 const AdminOrderList = () => {
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ const AdminOrderList = () => {
   
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
+      <Navbar />
       <h1 className="text-3xl font-bold mb-6 border-b-2 pb-4 text-gray-800">
         전체 주문 내역
       </h1>
