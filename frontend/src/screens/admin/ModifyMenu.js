@@ -82,6 +82,7 @@ const ModifyMenu = () => {
         if (result) {
             alert("메뉴가 성공적으로 수정되었습니다!");
             navigate("/admin/menus");
+            window.location.reload();  // 페이지 새로고침
         } else {
             throw new Error("메뉴 수정에 실패했습니다.");
         }
@@ -199,7 +200,7 @@ const ModifyMenu = () => {
                             type="submit"
                             className="bg-gray-700 text-white py-2 px-6 rounded-lg hover:bg-gray-800 transition"
                         >
-                            등록
+                            수정
                         </button>
                         <button
                             type="button"
