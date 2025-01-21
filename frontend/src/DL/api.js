@@ -47,19 +47,27 @@ export const addMenu = async (menuData, image) => {
 };
 
 export const adminLogin = async (username, password) => {
-  const response = await axios.post('http://localhost:8080/login', 
-    new URLSearchParams({
-      username,
-      password
-    }), 
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      withCredentials: true
+    try {
+        const response = await axios.post('http://localhost:8080/login',
+            new URLSearchParams({
+                username,
+                password
+            }),
+            {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                withCredentials: true
+            }
+        );
+
+        if (response.status === 200) {
+            return response.data;
+        }
+        throw new Error('로그인 실패');
+    } catch (error) {
+        throw new Error('아이디 또는 비밀번호가 올바르지 않습니다.');
     }
-  );
-  return response.data;
 };
 
 export const adminApi = {

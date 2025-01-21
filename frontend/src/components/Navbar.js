@@ -59,14 +59,28 @@ const Navbar = () => {
                         {showDropdown && (
                             <ul className="absolute top-full right-0 bg-[#333] py-2 min-w-[150px] rounded shadow-md list-none">
                                 <li className="m-0 p-2 hover:bg-[#444]">
-                                    <span onClick={()=>handleAdminMenuClick('/admin/order')} className="text-white no-underline block">
+                                    <Link
+                                        to="#"  // 또는 onClick에서 e.preventDefault() 사용
+                                        onClick={async (e) => {
+                                            e.preventDefault(); // 기본 Link 동작 방지
+                                            await handleAdminMenuClick('/admin/order');
+                                        }}
+                                        className="text-white no-underline block"
+                                    >
                                         주문 조회
-                                    </span>
+                                    </Link>
                                 </li>
                                 <li className="m-0 p-2 hover:bg-[#444]">
-                                    <span onClick={()=>handleAdminMenuClick('/admin/menus')} className="text-white no-underline block">
+                                    <Link
+                                        to="#"
+                                        onClick={async (e) => {
+                                            e.preventDefault();
+                                            await handleAdminMenuClick('/admin/menus');
+                                        }}
+                                        className="text-white no-underline block"
+                                    >
                                         상품 조회
-                                    </span>
+                                    </Link>
                                 </li>
                             </ul>
                         )}

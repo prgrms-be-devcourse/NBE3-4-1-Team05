@@ -41,7 +41,7 @@ const OrderPage = () => {
         });
     };
 
-   const removeFromCart = (menuId) => {
+    const removeFromCart = (menuId) => {
         setMenus((prevMenus) => {
             const updatedMenus = prevMenus.filter((menu) => menu.menuId !== menuId);
             localStorage.setItem("cartItems", JSON.stringify(updatedMenus)); // 로컬 스토리지 갱신
