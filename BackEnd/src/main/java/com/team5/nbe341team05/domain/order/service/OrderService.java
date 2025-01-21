@@ -52,14 +52,12 @@ public class OrderService {
             cart.addCartMenu(cartMenu);
         }
 
-        // 배송 상태
-        boolean orderStatus = checkTime();
 
         // 주문 생성
         Order order = Order.builder()
                 .email(orderDto.getEmail())
                 .address(orderDto.getAddress())
-                .deliveryStatus(orderStatus)
+                .deliveryStatus(false)
                 .totalPrice(0)
                 .build();
 
@@ -167,11 +165,6 @@ public class OrderService {
         }
 
         System.out.println("[자동] 오후 2시 - " + orderList.size() + "개의 주문 상태가 업데이트 되었습니다.");
-    }
-
-    public boolean checkTime() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.getHour() < 14;
     }
 
     public Optional<Order> findFirst() {
