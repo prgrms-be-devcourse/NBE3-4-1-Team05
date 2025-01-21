@@ -1,15 +1,13 @@
 package com.team5.nbe341team05.common.security;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,12 +15,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,18 +41,17 @@ public class SecurityConfig {
                         .addHeaderWriter(new XFrameOptionsHeaderWriter(
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
                 .formLogin(login -> login
-                        .loginPage("/login") // 로그인 페이지 설정
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
                         .successHandler((request, response, authentication) -> {
-                            String redirectUrl = request.getParameter("redirectUrl");
-                            if (redirectUrl != null && redirectUrl.startsWith("/admin/")) {
-                                response.sendRedirect(redirectUrl);
-                            } else {
-                                response.sendRedirect("/admin/order");
-                            }
-
-                        }) // 로그인 성공 후 리다이렉트
-                        .permitAll()
-                )
+                            response.setStatus(HttpStatus.OK.value());
+                            response.getWriter().write("{\"message\": \"로그인 성공\"}");
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            response.getWriter().write("{\"message\": \"로그인 실패\"}");
+                        })
+                        .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/") // 로그아웃 성공 후 리다이렉트

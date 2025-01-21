@@ -3,7 +3,6 @@ package com.team5.nbe341team05.domain.order.controller;
 import com.team5.nbe341team05.common.response.ResponseMessage;
 import com.team5.nbe341team05.domain.order.dto.OrderResponseDto;
 import com.team5.nbe341team05.domain.order.service.OrderService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,6 +47,9 @@ public class OrderAdminController {
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDir
     ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("사용자 이름: " + auth.getName());
+        System.out.println("권한: " + auth.getAuthorities());
         Page<OrderResponseDto> pagedOrders = orderService.getPagedOrders(page, size, sortBy, sortDir);
         return ResponseEntity.ok(pagedOrders);
     }

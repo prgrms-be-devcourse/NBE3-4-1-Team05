@@ -48,22 +48,25 @@ export const addMenu = async (menuData, image) => {
 
 export const adminLogin = async (username, password) => {
   try {
-    const response = await axios.post(
-      'http://localhost:8080/admin/login',
-      new URLSearchParams({ username, password }),
-      {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        withCredentials: true,
+      const response = await axios.post('http://localhost:8080/login',
+          new URLSearchParams({
+              username,
+              password
+          }),
+          {
+              headers: {
+                  "Content-Type": "application/x-www-form-urlencoded"
+              },
+              withCredentials: true
+          }
+      );
+
+      if (response.status === 200) {
+          return response.data;
       }
-    );
-    console.log("응답값", response.data);
-    return response.data;
+      throw new Error('로그인 실패');
   } catch (error) {
-    // 에러 상태 코드 처리
-    if (error.response && error.response.status === 401) {
-      throw new Error("아이디 또는 비밀번호가 올바르지 않습니다.");
-    }
-    throw new Error("서버와 연결에 문제가 발생했습니다.");
+      throw new Error('아이디 또는 비밀번호가 올바르지 않습니다.');
   }
 };
 
