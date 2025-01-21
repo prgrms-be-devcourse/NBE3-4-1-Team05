@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { adminApi } from "../../DL/api";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+import Navbar from '../../components/Navbar';
 
 const ModifyMenu = () => {
     const navigate = useNavigate();
@@ -93,6 +94,7 @@ const ModifyMenu = () => {
     };
     return (
         <div className="flex flex-col items-center w-full h-screen bg-gray-100 p-8">
+            <Navbar />
             <h1 className="text-2xl font-bold mb-8">상품 수정</h1>
             <form
                 onSubmit={submitMenu}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createOrder } from "../DL/api";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const OrderPage = () => {
     const [menus, setMenus] = useState([]); // 장바구니 상태
@@ -85,7 +86,9 @@ const OrderPage = () => {
     };
 
     return (
+        
         <div className="relative bg-gray-100 min-h-screen flex items-center justify-center py-8">
+            <Navbar />
             <div className="relative bg-gray-200 w-full max-w-[540px] rounded-md shadow-lg p-6">
                 <h1 className="text-[28px] font-semibold text-gray-800 mb-6 text-center">
                     주문 페이지

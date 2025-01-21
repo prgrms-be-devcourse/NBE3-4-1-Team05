@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import Navbar from "../components/Navbar";
 const EmailInput = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
@@ -16,6 +16,7 @@ const EmailInput = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-200">
+      <Navbar />
       <div className="bg-white w-96 rounded-md shadow-md p-8 relative text-center">
         {/* User Icon */}
         <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-300 rounded-full p-5">

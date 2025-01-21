@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { adminApi } from '../../DL/api';
+import Navbar from '../../components/Navbar';
 
 const AdminOrderDetail = () => {
     const { id } = useParams();
@@ -80,6 +81,7 @@ const AdminOrderDetail = () => {
                 top: "55px",
             }}
         >
+            <Navbar />
             {/* 주문내역서 제목 */}
             <h1 className="text-2xl font-bold absolute" style={{ left: "40px", top: "20px" }}>
                 주문내역서

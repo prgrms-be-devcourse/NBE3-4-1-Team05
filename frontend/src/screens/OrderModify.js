@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { modifyOrder, orderDetail } from "../DL/api"; // 수정 API와 상세 조회 API
+import Navbar from "../components/Navbar";
 
 const OrderModify = () => {
   const { id } = useParams(); // URL에서 주문 ID 가져오기
@@ -86,6 +87,7 @@ const OrderModify = () => {
         top: "115px",
       }}
     >
+      <Navbar />
       <h1
         className="font-semibold text-black mb-6"
         style={{
