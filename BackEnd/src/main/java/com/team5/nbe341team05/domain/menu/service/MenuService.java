@@ -112,6 +112,6 @@ public class MenuService {
         Path filePath = Paths.get(uploadDir, originalFilename);
         imageFile.transferTo(filePath.toFile());
 
-        return savedFilename;
+        return originalFilename;
     }
 }
