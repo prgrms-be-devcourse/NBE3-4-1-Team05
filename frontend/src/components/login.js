@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation } from 'react-router-dom';
 import { FaRegUserCircle } from "react-icons/fa";
 import { RiLockPasswordLine } from "react-icons/ri";
 import axios from "axios";
@@ -8,30 +9,34 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-          "/perform_login", // 변경: Spring Security에서 설정한 로그인 처리 URL
+      const redirectPath = location.state?.redirectTo || '/admin/order';
+      await axios.post(
+          "/perform_login",
           new URLSearchParams({
               username,
               password,
+              redirectUrl: redirectPath  // 리다이렉트 URL 추가
           }),
           {
               headers: {
                   "Content-Type": "application/x-www-form-urlencoded",
               },
+              withCredentials: true
           }
       );
-
+      window.location.href = redirectPath;
       console.log("Login successful:", response.data);
-      window.location.href = "/admin/orders"; // 로그인 성공 시 이동할 경로
+
   } catch (err) {
       console.error("Login failed:", err);
       setError("Invalid username or password");
   }
-  };
+};
 
   return (
     <div className="flex items-center justify-center w-screen h-screen bg-gray-300">

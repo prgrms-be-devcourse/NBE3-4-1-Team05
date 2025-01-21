@@ -47,7 +47,6 @@ public class MenuAdminController {
         );
     }
 
-    @Transactional
     @PostMapping
     public ResponseMessage<MenuResponseDto> createMenu(@RequestPart("menu") MenuRequestDto menuRequestDto
                                                        , @RequestPart("image")MultipartFile image
@@ -64,7 +63,7 @@ public class MenuAdminController {
 
     @Transactional
     @PostMapping("/{id}")
-    public ResponseMessage<Menu> updateMenu(@PathVariable("id") Long id, @RequestBody MenuRequestDto menuRequestDto, MultipartFile image) throws IOException {
+    public ResponseMessage<Menu> updateMenu(@PathVariable("id") Long id, @RequestPart(value = "menuRequestDto") MenuRequestDto menuRequestDto, @RequestPart(value = "image") MultipartFile image) throws IOException {
         Menu menu = this.menuService.updateMenu(id, menuRequestDto,image);
 
         return new ResponseMessage<>("상품이 성공적으로 수정되었습니다.", String.valueOf(HttpStatus.OK.value()), menu);

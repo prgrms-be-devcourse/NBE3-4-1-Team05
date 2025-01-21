@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { adminApi } from '../DL/api';
+import { adminApi } from '../../DL/api';
 import { useNavigate } from "react-router-dom";
 
 const AdminOrderList = () => {
@@ -21,11 +21,11 @@ const AdminOrderList = () => {
 
   const fetchOrders = async () => {
     try {
-
       const response = await adminApi.getAllOrders();
-      setOrders(response.data.content);
+      setOrders(response.data?.content || []);
     } catch (err) {
       console.error('Error fetching orders:', err);
+      setOrders([]);
     }
   };
   console.log('orders:', orders);
@@ -40,13 +40,13 @@ const AdminOrderList = () => {
     // 최종 문자열 반환
     return `${formattedDate}-${formattedOrderId}`;
   };
-
+  
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 border-b-2 pb-4 text-gray-800">
         전체 주문 내역
       </h1>
-      {orders.length > 0 ? (
+      {Array.isArray(orders) && orders.length > 0 ? (
         <table className="table-auto w-full border-collapse border border-gray-300 bg-white rounded-lg shadow-md">
           <thead className="bg-gray-200">
             <tr>
@@ -91,8 +91,8 @@ const AdminOrderList = () => {
                 <td className="border border-gray-300 px-6 py-4">
                   <span
                     className={`px-3 py-1 rounded-lg font-semibold ${order.deliveryStatus
-                        ? "bg-green-200 text-green-700"
-                        : "bg-yellow-200 text-yellow-700"
+                      ? "bg-green-200 text-green-700"
+                      : "bg-yellow-200 text-yellow-700"
                       }`}
                   >
                     {order.deliveryStatus ? "배송중" : "배송 준비중"}

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import ProductCard from './ProductCard';
-import ProductDetailPopup from './ProductDetailPopup';
-import { getAllMenu, getMenu } from '../DL/api';
+import AdminProductCard from './AdminProductCard';
+import ProductDetailPopup from '../ProductDetailPopup';
+import { getAllMenu } from '../../DL/api';
+import { useNavigate } from 'react-router-dom';
 
 
-const ProductList = () => {
+const AdminProductList = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -13,33 +14,29 @@ const ProductList = () => {
     const [hasMore, setHasMore] = useState(true);
     const observer = useRef();
     const [sortOption, setSortOption] = useState('recent');
-    const API_BASE_URL = 'http://localhost:8080'; // 백엔드 API 주소
+    const navigate = useNavigate();
 
     // 정렬 옵션 변경 핸들러
     const handleSortChange = (e) => {
         setSortOption(e.target.value);
         setPage(0);
         setProducts([]);
-        setHasMore(true);
         setLoading(true); // 로딩 상태 추가
     };
 
-    const fetchProducts = useCallback(async () => {
+    const fetchProducts = async () => {
         try {
-            if (!hasMore) return;
-            setLoading(true);
-            const response = await getAllMenu(page, sortOption);
-            console.log('API Response:', response.data); // 응답 확인용
+            const response = await getAllMenu(page, sortOption); // API 호출 시 정렬 옵션 전달
             const newProducts = response.data.data.content;
+
             setProducts(prev => page === 0 ? newProducts : [...prev, ...newProducts]);
             setHasMore(!response.data.data.last);
+            setLoading(false);
         } catch (error) {
-            console.error('API Error:', error); // 에러 확인용
             setError('메뉴를 불러오는데 실패했습니다.');
-        } finally {
-            setLoading(false); // 성공/실패 상관없이 로딩 상태 해제
+            setLoading(false);
         }
-    }, [page, sortOption, hasMore]);
+    };
 
     const lastProductCallback = useCallback(node => {
         if (loading) return;
@@ -49,7 +46,7 @@ const ProductList = () => {
         }
 
         observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore && !loading) {  // loading 체크 추가
+            if (entries[0].isIntersecting && hasMore) {
                 setPage(prevPage => prevPage + 1);
             }
         });
@@ -59,15 +56,6 @@ const ProductList = () => {
         }
     }, [loading, hasMore]);
 
-    // cleanup 추가
-    useEffect(() => {
-        return () => {
-            if (observer.current) {
-                observer.current.disconnect();
-            }
-        };
-    }, []);
-
     const isFirstRender = useRef(true);
 
     useEffect(() => {
@@ -75,27 +63,34 @@ const ProductList = () => {
             isFirstRender.current = false;
         }
         fetchProducts();
-    }, [page, sortOption, fetchProducts]);
+    }, [page, sortOption]);
 
-    const handleProductClick = async (product) => {
-        try {
-            // 메뉴 조회 API 호출 (조회수 증가)
-            await getMenu(product.id);
-            setSelectedProduct(product);
-        } catch (error) {
-            console.error('메뉴 조회 실패:', error);
-            setSelectedProduct(product); // API 실패해도 팝업은 표시
-        }
+    const handleProductClick = (product) => {
+        setSelectedProduct(product);
     };
 
     const handleClosePopup = () => {
         setSelectedProduct(null);
     };
 
+    const handleAddMenu = () => {
+        navigate('/admin/addMenu');
+    };
+
     if (error) return <div className="flex justify-center items-center min-h-screen">{error}</div>;
 
     return (
+        
         <div className="flex min-h-[calc(100vh-60px)] mt-[60px]">
+            {/* Sidebar */}
+            <div className="w-[250px] fixed left-0 top-[60px] h-[calc(100vh-60px)] bg-white border-r border-[#e0e0e0] p-5">
+                <ul className="list-none p-0 m-0">
+                    <li className="py-2.5 cursor-pointer text-base text-[#333] hover:text-[#666]">All Products</li>
+                    <li className="py-2.5 cursor-pointer text-base text-[#333] hover:text-[#666]">Coffee Bean package</li>
+                    <li className="py-2.5 cursor-pointer text-base text-[#333] hover:text-[#666]">Capsule</li>
+                </ul>
+            </div>
+
             {/* Main Content */}
             <div className="flex-1 p-8">
                 {/* 정렬 드롭다운 */}
@@ -111,8 +106,14 @@ const ProductList = () => {
                         <option value="priceDesc">가격높은순</option>
                         <option value="priceAsc">가격낮은순</option>
                     </select>
+                    <button
+                        onClick={handleAddMenu}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
+                    >
+                        메뉴 추가
+                    </button>
                 </div>
-
+            
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
                     {products.map((product, index) => (
                         <div
@@ -122,11 +123,14 @@ const ProductList = () => {
                             className="aspect-[3/4] w-full min-w-[250px]"
                         >
                             <div className="h-full">
-                                <ProductCard
-                                    image={`${API_BASE_URL}/images/${product.image}`}
+                                <AdminProductCard
+                                    key={product.id}
+                                    id={product.id}
+                                    image={product.image}
                                     title={product.productName}
                                     price={product.price}
-                                    product={product}
+                                    description={product.description}
+                                    stock={product.stock}
                                 />
                             </div>
                         </div>
@@ -146,4 +150,4 @@ const ProductList = () => {
     );
 };
 
-export default ProductList;
+export default AdminProductList;

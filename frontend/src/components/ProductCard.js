@@ -3,6 +3,7 @@ import { ImageOff } from 'lucide-react';
 
 const ProductCard = ({ image, title, price, onClick, product }) => {
     const [quantity, setQuantity] = useState(0);
+    const API_BASE_URL = 'http://localhost:8080';
     const [imageError, setImageError] = useState(false);
 
     const handleIncrement = (e) => {
@@ -88,7 +89,7 @@ const ProductCard = ({ image, title, price, onClick, product }) => {
                     </div>
                 ) : (
                     <img
-                        src={image}
+                        src={`${API_BASE_URL}/images/${image}`}
                         alt={title}
                         className="absolute top-0 left-0 w-full h-full object-contain bg-gray-50"
                         onError={handleImageError}

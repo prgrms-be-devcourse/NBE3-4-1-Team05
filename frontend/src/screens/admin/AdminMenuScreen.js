@@ -1,9 +1,9 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
-import AdminProductList from "../components//ProductList";
+import Navbar from '../../components/Navbar';
+import Sidebar from '../../components/Sidebar';
+import AdminProductList from "../../components/admin/AdminProductList";
 
-const MainMenuScreen = () => {
+const AdminMenuScreen = () => {
     return (
         <div>
             <Navbar />
@@ -21,4 +21,4 @@ const MainMenuScreen = () => {
     );
 };
 
-export default MainMenuScreen;
+export default AdminMenuScreen;
