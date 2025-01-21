@@ -36,17 +36,6 @@ public class MenuService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(sortType.getOrder());
 
-        // 전체 데이터 수를 먼저 확인
-        long totalCount = menuRepository.count();
-        int totalPages = (int) Math.ceil((double) totalCount / PAGE_SIZE);
-
-        // 페이지 번호 보정
-        if (page < 0) {
-            page = 0;
-        } else if (totalCount > 0 && page >= totalPages) {
-            page = totalPages - 1;
-        }
-
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(sorts));
         return menuRepository.findAll(pageable);
     }
