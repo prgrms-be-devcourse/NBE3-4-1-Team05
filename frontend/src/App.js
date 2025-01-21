@@ -34,10 +34,10 @@ function App() {
         {/* 기본 경로 설정 */}
         {/* <Route path="/" element={<h1>Welcome to the Home Page</h1>} /> */}
         <Route path="/admin/addMenu" element={<AddMenuPage/>}/>
-        <Route path="/admin/order/:id" element={<AdminOrderDetail />} />
+        <Route path="/admin/order/detail/:id" element={<AdminOrderDetail />} />
         <Route path="/admin/order" element={<AdminOrderList />} />
         <Route path="/" element={<MainMenuScreen />} />
-        <Route path="/order/list" element={<OrderList />} />
+        <Route path="/admin/order/list" element={<OrderList />} />
         <Route path="/admin/modify/:id" element={<ModifyMenuPage />} />
         <Route path="/admin/menus" element={<AdminMenuScreen />} />
       </Routes>

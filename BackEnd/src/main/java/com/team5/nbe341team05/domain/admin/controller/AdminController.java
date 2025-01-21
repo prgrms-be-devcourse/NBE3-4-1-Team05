@@ -26,7 +26,6 @@ public class AdminController {
         }
     }
 
-
     @GetMapping("/login")
     public String getLoginPage() {
         return "forward:/index.html";

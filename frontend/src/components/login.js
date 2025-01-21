@@ -15,7 +15,6 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // 오류 초기화
-
     try {
         const redirectPath = location.state?.redirectTo || '/admin/order';
         await adminLogin(username.trim(), password.trim()); // 공백 제거

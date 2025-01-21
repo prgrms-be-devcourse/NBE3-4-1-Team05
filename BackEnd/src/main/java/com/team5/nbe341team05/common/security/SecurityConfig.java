@@ -22,10 +22,9 @@ import org.springframework.security.web.header.writers.frameoptions.XFrameOption
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-
-import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -47,7 +46,7 @@ public class SecurityConfig {
                                 XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
                 .formLogin(login -> login
                         .loginPage("/login") // 로그인 페이지 설정
-                        .loginProcessingUrl("/perform_login")
+                        .loginProcessingUrl("/login")
                         .successHandler(new AuthenticationSuccessHandler() {
                             @Override
                             public void onAuthenticationSuccess(HttpServletRequest request,
