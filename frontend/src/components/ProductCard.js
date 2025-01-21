@@ -89,7 +89,7 @@ const ProductCard = ({ image, title, price, onClick, product }) => {
                     </div>
                 ) : (
                     <img
-                        src={`${API_BASE_URL}/images/${image}`}
+                        src={`${API_BASE_URL}/images/${product.image}`}
                         alt={title}
                         className="absolute top-0 left-0 w-full h-full object-contain bg-gray-50"
                         onError={handleImageError}
