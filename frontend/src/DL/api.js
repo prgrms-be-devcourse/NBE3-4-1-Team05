@@ -10,35 +10,6 @@ const api = axios.create({
   withCredentials: true, // 세션 기반 인증에 필요한 설정 (쿠키 포함)
 });
 
-// 요청 인터셉터 - 토큰 추가
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// 응답 인터셉터 추가
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    console.error('API 에러:', error.response);
-    if (error.response?.status === 302) {
-      // 로그인 페이지로 리다이렉트
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
-
 export const addMenu = async (menuData, image) => {
   try {
     const formData = new FormData();
@@ -76,7 +47,7 @@ export const addMenu = async (menuData, image) => {
 };
 
 export const adminLogin = async (username, password) => {
-  const response = await api.post('/login', 
+  const response = await axios.post('http://localhost:8080/login', 
     new URLSearchParams({
       username,
       password
@@ -136,8 +107,8 @@ export const adminApi = {
       throw error;
     }
   },
-  cancelOrder: (orderId) => api.delete(`/admin/order/${orderId}`),
-  cancelMenu: (menuId) => api.delete(`/admin/menus/${menuId}`)
+  cancelOrder: async (orderId) => api.delete(`/admin/order/${orderId}`),
+  cancelMenu: async (menuId) => api.delete(`/admin/menus/${menuId}`)
 };
 
 // 주문 생성
