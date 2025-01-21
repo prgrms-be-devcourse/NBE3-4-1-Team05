@@ -6,7 +6,6 @@ import OrderList from './screens/OrderList';
 import OrderDetail from './screens/OrderDetail';
 import OrderModify from './screens/OrderModify';
 import MainMenuScreen from './screens/MainMenuScreen';
-import OrderListScreen from "./screens/OrderListScreen";
 import NoticeScreen from './screens/NoticeScreen';
 import EventsScreen from './screens/EventsScreen';
 
@@ -23,7 +22,6 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/order_list" element={<OrderListScreen/>}/>
         <Route path="/notice" element={<NoticeScreen/>}/>
         <Route path="/events" element={<EventsScreen/>}/>
         <Route path="/order" element={<OrderPage />} />
