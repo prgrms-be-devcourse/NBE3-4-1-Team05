@@ -25,4 +25,12 @@ public class SwaggerConfig {
                 .pathsToMatch("/menus/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi adminApi() {
+        return GroupedOpenApi.builder()
+            .group("admin")
+            .pathsToMatch("/admin/**")
+            .build();
+    }
 }
