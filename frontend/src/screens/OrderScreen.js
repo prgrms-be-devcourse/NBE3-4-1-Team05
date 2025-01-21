@@ -38,8 +38,12 @@ const OrderPage = () => {
         );
     };
 
-    const removeFromCart = (menuId) => {
-        setMenus((prevMenus) => prevMenus.filter((menu) => menu.menuId !== menuId));
+   const removeFromCart = (menuId) => {
+        setMenus((prevMenus) => {
+            const updatedMenus = prevMenus.filter((menu) => menu.menuId !== menuId);
+            localStorage.setItem("cartItems", JSON.stringify(updatedMenus)); // 로컬 스토리지 갱신
+            return updatedMenus;
+        });
     };
 
     const calculateTotalPrice = () => {
